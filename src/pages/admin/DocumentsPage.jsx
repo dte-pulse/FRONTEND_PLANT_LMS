@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRo
 import { Badge } from '@/components/ui/badge'
 import apiClient from '@/api/client'
 import { toast } from 'sonner'
-import { FileText, Upload, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Archive, Rocket, RotateCcw } from 'lucide-react'
+import { FileText, Upload, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Archive, Rocket, RotateCcw, Layers, Cpu } from 'lucide-react'
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState([])

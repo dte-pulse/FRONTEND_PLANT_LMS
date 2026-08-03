@@ -33,3 +33,209 @@ button, input, select {
   background: rgba(148, 163, 184, 0.4);
   border-radius: 999px;
 }
+
+/* --- LIGHT THEME STYLING OVERRIDES --- */
+:root {
+  --theme-bg-0b0f17: #f8fafc;
+  --theme-bg-131825: #ffffff;
+  --theme-bg-161c2c: #f1f5f9;
+  --theme-bg-0f1420: #f1f5f9;
+  --theme-bg-080d18: #f8fafc;
+  --theme-bg-1a2234: #f1f5f9;
+  --theme-bg-020617: rgba(15, 23, 42, 0.4);
+  
+  --theme-text-white: #0f172a;
+  --theme-text-slate-100: #0f172a;
+  --theme-text-slate-200: #1e293b;
+  --theme-text-slate-300: #334155;
+  --theme-text-slate-400: #64748b;
+  --theme-text-slate-500: #94a3b8;
+  
+  --theme-border-slate-800: #e2e8f0;
+  --theme-border-slate-700: #cbd5e1;
+}
+
+html.dark {
+  --theme-bg-0b0f17: #0b0f17;
+  --theme-bg-131825: #131825;
+  --theme-bg-161c2c: #161c2c;
+  --theme-bg-0f1420: #0f1420;
+  --theme-bg-080d18: #080d18;
+  --theme-bg-1a2234: #1a2234;
+  --theme-bg-020617: rgba(2, 6, 23, 0.9);
+  
+  --theme-text-white: #ffffff;
+  --theme-text-slate-100: #f1f5f9;
+  --theme-text-slate-200: #e2e8f0;
+  --theme-text-slate-300: #cbd5e1;
+  --theme-text-slate-400: #94a3b8;
+  --theme-text-slate-500: #64748b;
+  
+  --theme-border-slate-800: #1e293b;
+  --theme-border-slate-700: #334155;
+}
+
+html:not(.dark) {
+  color-scheme: light !important;
+}
+
+html:not(.dark) .bg-\[\#0B0F17\], html:not(.dark) .bg-\[\#0b0f17\] { background-color: var(--theme-bg-0b0f17) !important; }
+html:not(.dark) .bg-\[\#131825\], html:not(.dark) .bg-\[\#131825\]\/80 { background-color: var(--theme-bg-131825) !important; }
+html:not(.dark) .bg-\[\#161C2C\], html:not(.dark) .bg-\[\#161c2c\] { background-color: var(--theme-bg-161c2c) !important; }
+html:not(.dark) .bg-\[\#0F1420\], html:not(.dark) .bg-\[\#0f1420\] { background-color: var(--theme-bg-0f1420) !important; }
+html:not(.dark) .bg-\[\#080D18\], html:not(.dark) .bg-\[\#080d18\] { background-color: var(--theme-bg-080d18) !important; }
+html:not(.dark) .bg-\[\#1A2234\], html:not(.dark) .bg-\[\#1a2234\] { background-color: var(--theme-bg-1a2234) !important; }
+
+/* Opacity modifiers for background classes */
+html:not(.dark) .bg-\[\#161C2C\]\/90 { background-color: rgba(241, 245, 249, 0.9) !important; }
+html:not(.dark) .bg-\[\#161C2C\]\/50 { background-color: rgba(241, 245, 249, 0.5) !important; }
+html:not(.dark) .bg-\[\#0F1420\]\/80 { background-color: rgba(241, 245, 249, 0.8) !important; }
+html:not(.dark) .bg-\[\#0B0F17\]\/80 { background-color: rgba(248, 250, 252, 0.8) !important; }
+html:not(.dark) .bg-\[\#0B0F17\]\/90 { background-color: rgba(248, 250, 252, 0.9) !important; }
+html:not(.dark) .bg-\[\#0F1420\]\/90 { background-color: rgba(241, 245, 249, 0.9) !important; }
+
+/* Modal Backdrops / Overlays */
+html:not(.dark) .bg-\[\#020617\], html:not(.dark) .bg-\[\#020617\]\/90 { background-color: var(--theme-bg-020617) !important; backdrop-filter: blur(8px); }
+
+/* Standard Tailwind backgrounds */
+html:not(.dark) .bg-slate-950 { background-color: #f8fafc !important; }
+html:not(.dark) .bg-slate-900 { background-color: #ffffff !important; }
+html:not(.dark) .bg-slate-900\/80 { background-color: rgba(255, 255, 255, 0.8) !important; }
+html:not(.dark) .bg-slate-900\/90 { background-color: rgba(255, 255, 255, 0.9) !important; }
+html:not(.dark) .bg-slate-900\/60 { background-color: rgba(241, 245, 249, 0.6) !important; }
+html:not(.dark) .bg-slate-900\/40 { background-color: rgba(241, 245, 249, 0.4) !important; }
+html:not(.dark) .bg-slate-800 { background-color: #f1f5f9 !important; }
+html:not(.dark) .bg-slate-800\/60 { background-color: rgba(241, 245, 249, 0.6) !important; }
+html:not(.dark) .bg-slate-800\/50 { background-color: rgba(241, 245, 249, 0.5) !important; }
+html:not(.dark) .bg-slate-800\/40 { background-color: rgba(241, 245, 249, 0.4) !important; }
+html:not(.dark) .bg-slate-800\/30 { background-color: rgba(241, 245, 249, 0.3) !important; }
+html:not(.dark) .bg-slate-800\/10 { background-color: rgba(241, 245, 249, 0.1) !important; }
+
+/* Input fields, select tags, textarea controls */
+html:not(.dark) input, html:not(.dark) select, html:not(.dark) textarea {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) input::placeholder, html:not(.dark) textarea::placeholder {
+  color: #94a3b8 !important;
+}
+html:not(.dark) option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Borders overrides */
+html:not(.dark) .border-slate-800, html:not(.dark) .border-slate-800\/80, html:not(.dark) .border-slate-800\/90 { border-color: var(--theme-border-slate-800) !important; }
+html:not(.dark) .border-slate-700, html:not(.dark) .border-slate-700\/80, html:not(.dark) .border-slate-700\/90 { border-color: var(--theme-border-slate-700) !important; }
+html:not(.dark) .border-white\/10 { border-color: var(--theme-border-slate-800) !important; }
+html:not(.dark) .border-white\/20 { border-color: var(--theme-border-slate-700) !important; }
+html:not(.dark) .border-white\/30 { border-color: var(--theme-border-slate-700) !important; }
+html:not(.dark) .divide-slate-800 > * + * { border-color: var(--theme-border-slate-800) !important; }
+html:not(.dark) .divide-slate-800\/60 > * + * { border-color: rgba(203, 213, 225, 0.6) !important; }
+
+/* Text colors overrides */
+html:not(.dark) .text-slate-100 { color: var(--theme-text-slate-100) !important; }
+html:not(.dark) .text-slate-200 { color: var(--theme-text-slate-200) !important; }
+html:not(.dark) .text-slate-300 { color: var(--theme-text-slate-300) !important; }
+html:not(.dark) .text-slate-400 { color: var(--theme-text-slate-400) !important; }
+html:not(.dark) .text-slate-500 { color: var(--theme-text-slate-500) !important; }
+
+/* High contrast colors for semantic tags/badges in light mode */
+html:not(.dark) .text-indigo-400 { color: #4f46e5 !important; }
+html:not(.dark) .text-cyan-400 { color: #0891b2 !important; }
+html:not(.dark) .text-amber-400 { color: #d97706 !important; }
+html:not(.dark) .text-rose-400 { color: #e11d48 !important; }
+html:not(.dark) .text-emerald-400 { color: #059669 !important; }
+html:not(.dark) .text-purple-400 { color: #7c3aed !important; }
+
+/* Conditional white text override (keeps white text inside solid colored badges/buttons) */
+html:not(.dark) :not(
+  .bg-indigo-600, .bg-indigo-600 *,
+  .bg-indigo-500, .bg-indigo-500 *,
+  .bg-cyan-600, .bg-cyan-600 *,
+  .bg-cyan-500, .bg-cyan-500 *,
+  .bg-emerald-600, .bg-emerald-600 *,
+  .bg-emerald-500, .bg-emerald-500 *,
+  .bg-rose-500, .bg-rose-500 *,
+  .bg-rose-600, .bg-rose-600 *,
+  .bg-amber-500, .bg-amber-500 *,
+  .bg-amber-600, .bg-amber-600 *,
+  .bg-purple-500, .bg-purple-500 *,
+  .bg-purple-600, .bg-purple-600 *,
+  .bg-red-500, .bg-red-500 *,
+  .bg-red-600, .bg-red-600 *,
+  .bg-blue-600, .bg-blue-600 *,
+  .bg-blue-500, .bg-blue-500 *,
+  .bg-violet-600, .bg-violet-600 *,
+  .bg-violet-500, .bg-violet-500 *,
+  .text-white-force, .text-white-force *
+).text-white {
+  color: var(--theme-text-white) !important;
+}
+
+/* Hover texts & hovers */
+html:not(.dark) :not(
+  .bg-indigo-600, .bg-indigo-600 *,
+  .bg-indigo-500, .bg-indigo-500 *,
+  .bg-cyan-600, .bg-cyan-600 *,
+  .bg-cyan-500, .bg-cyan-500 *,
+  .bg-emerald-600, .bg-emerald-600 *,
+  .bg-emerald-500, .bg-emerald-500 *,
+  .bg-rose-500, .bg-rose-500 *,
+  .bg-rose-600, .bg-rose-600 *,
+  .bg-amber-500, .bg-amber-500 *,
+  .bg-amber-600, .bg-amber-600 *,
+  .bg-purple-500, .bg-purple-500 *,
+  .bg-purple-600, .bg-purple-600 *,
+  .bg-red-500, .bg-red-500 *,
+  .bg-red-600, .bg-red-600 *,
+  .bg-blue-600, .bg-blue-600 *,
+  .bg-blue-500, .bg-blue-500 *,
+  .bg-violet-600, .bg-violet-600 *,
+  .bg-violet-500, .bg-violet-500 *
+).hover\:text-white:hover {
+  color: #0f172a !important;
+}
+
+html:not(.dark) :not(
+  .bg-indigo-600, .bg-indigo-600 *,
+  .bg-indigo-500, .bg-indigo-500 *,
+  .bg-cyan-600, .bg-cyan-600 *,
+  .bg-cyan-500, .bg-cyan-500 *,
+  .bg-emerald-600, .bg-emerald-600 *,
+  .bg-emerald-500, .bg-emerald-500 *,
+  .bg-rose-500, .bg-rose-500 *,
+  .bg-rose-600, .bg-rose-600 *,
+  .bg-amber-500, .bg-amber-500 *,
+  .bg-amber-600, .bg-amber-600 *,
+  .bg-purple-500, .bg-purple-500 *,
+  .bg-purple-600, .bg-purple-600 *,
+  .bg-red-500, .bg-red-500 *,
+  .bg-red-600, .bg-red-600 *,
+  .bg-blue-600, .bg-blue-600 *,
+  .bg-blue-500, .bg-blue-500 *,
+  .bg-violet-600, .bg-violet-600 *,
+  .bg-violet-500, .bg-violet-500 *
+).group:hover .group-hover\:text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .hover\:text-slate-200:hover { color: #1e293b !important; }
+html:not(.dark) .group:hover .group-hover\:text-slate-200 { color: #1e293b !important; }
+
+/* Hover background styles override */
+html:not(.dark) .hover\:bg-slate-800:hover { background-color: #f1f5f9 !important; }
+html:not(.dark) .hover\:bg-slate-800\/60:hover { background-color: rgba(241, 245, 249, 0.6) !important; }
+html:not(.dark) .hover\:bg-slate-800\/50:hover { background-color: rgba(241, 245, 249, 0.5) !important; }
+html:not(.dark) .hover\:bg-slate-800\/40:hover { background-color: rgba(241, 245, 249, 0.4) !important; }
+html:not(.dark) .hover\:bg-slate-900:hover { background-color: #e2e8f0 !important; }
+html:not(.dark) .hover\:bg-slate-900\/80:hover { background-color: rgba(226, 232, 240, 0.8) !important; }
+html:not(.dark) .group-hover\:bg-slate-800\/60:hover { background-color: rgba(241, 245, 249, 0.6) !important; }
+
+/* Shadows refinement for light background */
+html:not(.dark) .shadow-xl { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important; }
+html:not(.dark) .shadow-2xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important; }
+html:not(.dark) .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important; }
+html:not(.dark) .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+html:not(.dark) .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important; }
