@@ -59,6 +59,19 @@ export default function MindMapPage() {
   const totalParents = mapData.total_parents ?? 0
   const progressPct = totalParents > 0 ? Math.round((completedParents / totalParents) * 100) : 0
 
+  function getVersionBadge(versionStatus) {
+    if (versionStatus === 'new') {
+      return <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded-full ml-1 shrink-0">NEW</span>
+    }
+    if (versionStatus === 'modified') {
+      return <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded-full ml-1 shrink-0">UPDATED</span>
+    }
+    if (versionStatus === 'removed') {
+      return <span className="text-[9px] font-bold text-slate-400 bg-slate-500/10 border border-slate-500/30 px-1.5 py-0.5 rounded-full ml-1 shrink-0">REMOVED</span>
+    }
+    return null
+  }
+
   return (
     <div className="space-y-6 pb-10 max-w-7xl mx-auto">
       {/* Header */}
@@ -108,6 +121,23 @@ export default function MindMapPage() {
         </div>
       </div>
 
+      {/* Diff Legend / Banner */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-slate-800 bg-[#131825]/40 px-5 py-3 text-xs font-medium text-slate-400">
+        <span className="text-slate-200 font-bold flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Version Diff Legend:</span>
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span>New in this upload</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-amber-400" />
+          <span>Modified procedure</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-slate-500" />
+          <span className="line-through text-slate-500">Removed / archived section</span>
+        </div>
+      </div>
+
       {/* Root Node */}
       <div className="flex justify-center">
         <div className="flex flex-col items-center">
@@ -129,21 +159,26 @@ export default function MindMapPage() {
             <div key={parent.id} className="flex flex-col items-center gap-2 min-w-[240px]">
               <div className="w-px h-4 bg-slate-800" />
               <button
-                onClick={() => navigate(`/trainee/learn/${documentId}`)}
+                onClick={() => parent.version_status !== 'removed' && navigate(`/trainee/learn/${documentId}`)}
                 onMouseEnter={() => setHoveredNode(`parent_${pi}`)}
                 onMouseLeave={() => setHoveredNode(null)}
-                className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 ${cfg.bg} ${cfg.border} ${isHovered ? 'scale-[1.02] shadow-md' : 'shadow-xs'}`}
+                className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 ${cfg.bg} ${cfg.border} ${isHovered && parent.version_status !== 'removed' ? 'scale-[1.02] shadow-md' : 'shadow-xs'} ${parent.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
+                disabled={parent.version_status === 'removed'}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text} border ${cfg.border}`}>
-                    Module {pi + 1}
-                  </span>
-                  {parent.status === 'completed' ? <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <div className="flex items-center gap-1 min-w-0">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${cfg.bg} ${cfg.text} border ${cfg.border}`}>
+                      Module {pi + 1}
+                    </span>
+                    {getVersionBadge(parent.version_status)}
+                  </div>
+                  {parent.version_status === 'removed' ? <span className="text-[10px] text-slate-500 uppercase tracking-widest shrink-0 font-bold font-mono">Removed</span>
+                    : parent.status === 'completed' ? <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                     : parent.status === 'locked' ? <Lock className="h-4 w-4 text-slate-600 shrink-0" />
                     : <div className="h-4 w-4 rounded-full border-2 border-amber-400 shrink-0" />}
                 </div>
 
-                <h4 className={`text-xs font-bold leading-snug ${cfg.text} line-clamp-2 mb-3`}>{parent.title}</h4>
+                <h4 className={`text-xs font-bold leading-snug line-clamp-2 mb-3 ${parent.version_status === 'removed' ? 'line-through text-slate-500' : cfg.text}`}>{parent.title}</h4>
 
                 <div className="flex items-center gap-3 pt-2 border-t border-slate-800/80">
                   <div className="relative flex-shrink-0">
@@ -154,7 +189,7 @@ export default function MindMapPage() {
                   </div>
                   <div className="text-[10px] text-slate-400 space-y-0.5">
                     <p className="font-bold text-slate-200">{parent.children_completed}/{parent.children_total} sub-topics</p>
-                    <p className={`font-semibold ${cfg.text}`}>{cfg.label}</p>
+                    <p className={`font-semibold ${cfg.text}`}>{parent.version_status === 'removed' ? 'Removed' : cfg.label}</p>
                   </div>
                 </div>
               </button>
@@ -167,14 +202,16 @@ export default function MindMapPage() {
                   return (
                     <button
                       key={child.id}
-                      onClick={() => navigate(`/trainee/learn/${documentId}`)}
+                      onClick={() => child.version_status !== 'removed' && navigate(`/trainee/learn/${documentId}`)}
                       onMouseEnter={() => setHoveredNode(`child_${pi}_${ci}`)}
                       onMouseLeave={() => setHoveredNode(null)}
-                      className={`w-full rounded-xl border px-3.5 py-2.5 text-left transition-all duration-150 ${childCfg.bg} ${childCfg.border} ${isChildHovered ? 'scale-[1.02]' : ''}`}
+                      className={`w-full rounded-xl border px-3.5 py-2.5 text-left transition-all duration-150 ${childCfg.bg} ${childCfg.border} ${isChildHovered && child.version_status !== 'removed' ? 'scale-[1.02]' : ''} ${child.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
+                      disabled={child.version_status === 'removed'}
                     >
                       <div className="flex items-center gap-2">
-                        <div className={`h-2 w-2 rounded-full shrink-0 ${childCfg.dot}`} />
-                        <span className={`text-[11px] font-semibold truncate flex-1 ${childCfg.text}`}>{child.title ?? `Sub-topic ${child.child_index}`}</span>
+                        <div className={`h-2 w-2 rounded-full shrink-0 ${child.version_status === 'removed' ? 'bg-slate-600' : childCfg.dot}`} />
+                        <span className={`text-[11px] font-semibold truncate flex-1 ${child.version_status === 'removed' ? 'line-through text-slate-500' : childCfg.text}`}>{child.title ?? `Sub-topic ${child.child_index}`}</span>
+                        {getVersionBadge(child.version_status)}
                         {child.knowledge_score > 0 && <span className="text-[10px] font-mono font-bold shrink-0 text-indigo-400">{Math.round(child.knowledge_score)}%</span>}
                         {child.status === 'locked' && <Lock className="h-3 w-3 text-slate-600 shrink-0" />}
                         {child.is_passed && <CheckCircle2 className="h-3 w-3 text-emerald-400 shrink-0" />}
@@ -187,6 +224,7 @@ export default function MindMapPage() {
           )
         })}
       </div>
+
 
       {/* Summary Footer */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80">

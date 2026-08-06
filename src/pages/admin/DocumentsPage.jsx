@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRo
 import { Badge } from '@/components/ui/badge'
 import apiClient from '@/api/client'
 import { toast } from 'sonner'
-import { FileText, Upload, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Archive, Rocket, RotateCcw, Layers, Cpu } from 'lucide-react'
+import { FileText, Upload, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Archive, Rocket, RotateCcw, Layers, Cpu, History, BarChart3 } from 'lucide-react'
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState([])
@@ -20,6 +20,45 @@ export default function DocumentsPage() {
   const [showPublishConfirm, setShowPublishConfirm] = useState(false)
   const [pollingDocId, setPollingDocId] = useState(null)
   const [reingestingIds, setReingestingIds] = useState(new Set())
+
+  // Preview / Version Track State
+  const [previewDoc, setPreviewDoc] = useState(null)
+  const [previewChunks, setPreviewChunks] = useState([])
+  const [previewHistory, setPreviewHistory] = useState(null)
+  const [previewVersionId, setPreviewVersionId] = useState(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [loadingPreview, setLoadingPreview] = useState(false)
+
+  const loadPreviewData = async (docId) => {
+    setLoadingPreview(true)
+    try {
+      const [chunksRes, historyRes] = await Promise.all([
+        apiClient.get(`/documents/${docId}/chunks`),
+        apiClient.get(`/documents/${docId}/history-summary`)
+      ])
+      setPreviewChunks(chunksRes.data || [])
+      setPreviewHistory(historyRes.data || null)
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to load preview data')
+    } finally {
+      setLoadingPreview(false)
+    }
+  }
+
+  const handlePreviewVersionChange = async (verDocId) => {
+    setPreviewVersionId(verDocId)
+    setLoadingPreview(true)
+    try {
+      const chunksRes = await apiClient.get(`/documents/${verDocId}/chunks`)
+      setPreviewChunks(chunksRes.data || [])
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to load version preview')
+    } finally {
+      setLoadingPreview(false)
+    }
+  }
 
   // Upload Form State
   const [code, setCode] = useState('')
@@ -285,7 +324,16 @@ export default function DocumentsPage() {
               <Button variant="outline" size="icon" onClick={fetchDocuments} disabled={loading}>
                 <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               </Button>
-              <Button className="cursor-pointer" onClick={() => setIsUploadOpen(true)}>
+              <Button className="cursor-pointer" onClick={() => {
+                setCode('')
+                setTitle('')
+                setTopic('')
+                setSelectedSubjectId('')
+                setSelectedTopicId('')
+                setVersion(1)
+                setFile(null)
+                setIsUploadOpen(true)
+              }}>
                 <Upload className="mr-2 h-4 w-4" /> Upload SOP
               </Button>
             </div>
@@ -349,6 +397,40 @@ export default function DocumentsPage() {
                                   }}
                                 >
                                   <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="h-8 w-8 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10"
+                                  title="Upload new version"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCode(doc.code);
+                                    setTitle(doc.title);
+                                    setTopic(doc.topic);
+                                    setSelectedSubjectId(doc.subject_id || '');
+                                    setSelectedTopicId(doc.topic_id || '');
+                                    setVersion((doc.version || 1) + 1);
+                                    setFile(null);
+                                    setIsUploadOpen(true);
+                                  }}
+                                >
+                                  <Upload className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="h-8 w-8 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-400/10"
+                                  title="Track version history & preview"
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    setPreviewDoc(doc);
+                                    setPreviewVersionId(doc.id);
+                                    setIsPreviewOpen(true);
+                                    await loadPreviewData(doc.id);
+                                  }}
+                                >
+                                  <BarChart3 className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   size="icon"
@@ -419,6 +501,23 @@ export default function DocumentsPage() {
                         <Rocket className="mr-2 h-4 w-4" /> Publish
                       </Button>
                     )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/10 gap-1.5"
+                      onClick={() => {
+                        setCode(selectedDoc.code)
+                        setTitle(selectedDoc.title)
+                        setTopic(selectedDoc.topic)
+                        setSelectedSubjectId(selectedDoc.subject_id || '')
+                        setSelectedTopicId(selectedDoc.topic_id || '')
+                        setVersion((selectedDoc.version || 1) + 1)
+                        setFile(null)
+                        setIsUploadOpen(true)
+                      }}
+                    >
+                      <Upload className="h-3.5 w-3.5" /> Upload New Version
+                    </Button>
                     {selectedDoc.status !== 'archived' && (
                       <Button size="sm" variant="outline" onClick={() => handleLifecycleAction('archive')}>
                         <Archive className="mr-2 h-4 w-4" /> Archive
@@ -734,6 +833,173 @@ export default function DocumentsPage() {
               >
                 Confirm Publish
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Document Version Hub & Preview Modal */}
+      {isPreviewOpen && previewDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+          <div className="w-full max-w-7xl h-[85vh] rounded-3xl border border-white/10 bg-slate-950 flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-900/40">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-cyan-600/20 p-2.5 text-cyan-400 border border-cyan-500/30">
+                  <BarChart3 className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    {previewDoc.code} Version Hub & Document Preview
+                  </h3>
+                  <p className="text-xs text-slate-400">Track procedural updates, revision histories, and preview content chunks.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/10 gap-1.5"
+                  onClick={() => {
+                    setIsPreviewOpen(false);
+                    setCode(previewDoc.code);
+                    setTitle(previewDoc.title);
+                    setTopic(previewDoc.topic);
+                    setSelectedSubjectId(previewDoc.subject_id || '');
+                    setSelectedTopicId(previewDoc.topic_id || '');
+                    setVersion((previewDoc.version || 1) + 1);
+                    setFile(null);
+                    setIsUploadOpen(true);
+                  }}
+                >
+                  <Upload className="h-3.5 w-3.5" /> Upload New Version
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPreviewOpen(false)}
+                >
+                  Close Hub
+                </Button>
+              </div>
+            </div>
+
+            {/* Modal Content - Three Column Layout */}
+            <div className="flex-1 flex overflow-hidden">
+              {/* Column 1: Version Timeline & History */}
+              <div className="w-1/4 border-r border-white/10 p-5 overflow-y-auto space-y-4 bg-slate-950">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Version Records</h4>
+                {loadingPreview && !previewHistory ? (
+                  <div className="flex justify-center py-10">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+                  </div>
+                ) : !previewHistory ? (
+                  <p className="text-xs text-slate-500">No version history loaded.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {(previewHistory.version_history || []).map((ver) => {
+                      const isCurrentPreview = ver.id === previewVersionId;
+                      const isCurrentDoc = ver.id === previewDoc.id;
+                      return (
+                        <div 
+                          key={ver.id}
+                          onClick={() => handlePreviewVersionChange(ver.id)}
+                          className={`rounded-2xl border p-3.5 text-left cursor-pointer transition-all ${isCurrentPreview ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'}`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-xs font-bold text-white">Version {ver.version}</span>
+                            <div className="flex gap-1.5">
+                              {isCurrentDoc && <span className="text-[9px] font-bold text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded-full border border-indigo-500/20">Active</span>}
+                              {ver.status === 'archived' && <span className="text-[9px] font-bold text-slate-400 bg-slate-500/10 px-1.5 py-0.5 rounded-full">Archived</span>}
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-300 font-medium truncate">{ver.title}</p>
+                          <p className="text-[10px] text-slate-500 mt-2 font-mono">{ver.created_at ? new Date(ver.created_at).toLocaleDateString() : ''}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Column 2: Chunk Preview */}
+              <div className="w-1/2 p-5 overflow-y-auto space-y-4 bg-slate-900/30">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Document Chunk Preview</h4>
+                  <span className="text-xs text-slate-500 font-mono">Showing {previewChunks.length} chunks</span>
+                </div>
+                {loadingPreview ? (
+                  <div className="flex justify-center py-20">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-400 border-t-transparent" />
+                  </div>
+                ) : previewChunks.length === 0 ? (
+                  <div className="text-center text-slate-500 py-20 text-xs">
+                    No content chunks extracted for this version.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {previewChunks.map((chunk, idx) => (
+                      <div key={chunk.id} className="rounded-2xl border border-white/5 bg-slate-950 p-4 space-y-2.5">
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="bg-cyan-500/15 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">
+                            Chunk {chunk.chunk_index + 1}
+                          </span>
+                          <span className="text-slate-500">
+                            Page {chunk.page_no} · {chunk.token_count} tokens
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 leading-relaxed font-sans">{chunk.content}</p>
+                        {chunk.learning_card && (
+                          <div className="bg-amber-400/5 border border-amber-400/15 p-2.5 rounded-xl">
+                            <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block mb-0.5">AI Representation</span>
+                            <p className="text-[11px] text-amber-200/90 leading-snug">{chunk.learning_card}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Column 3: Impact Summary */}
+              <div className="w-1/4 border-l border-white/10 p-5 overflow-y-auto space-y-4 bg-slate-950">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Publish Reset Impact</h4>
+                {loadingPreview && !previewHistory ? (
+                  <div className="flex justify-center py-10">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+                  </div>
+                ) : !previewHistory ? (
+                  <p className="text-xs text-slate-500">No impact stats available.</p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {[
+                        ['Impacted Users', previewHistory.publish_impact?.impacted_user_count ?? 0],
+                        ['Training Assignments', previewHistory.publish_impact?.training_assignment_count ?? 0],
+                        ['Progress Resets', previewHistory.publish_impact?.progress_records_to_reset ?? 0]
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-2xl border border-white/5 bg-white/5 p-3.5">
+                          <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">{label}</p>
+                          <p className="text-xl font-black text-white mt-1">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">Impacted Departments</p>
+                      {(previewHistory.publish_impact?.impacted_departments || []).length === 0 ? (
+                        <p className="text-xs text-slate-500 font-medium">None linked.</p>
+                      ) : (
+                        <div className="flex flex-wrap gap-1.5">
+                          {previewHistory.publish_impact.impacted_departments.map((dept) => (
+                            <span key={dept} className="rounded-lg bg-slate-900 border border-white/5 px-2.5 py-1 text-[10px] text-slate-300">
+                              {dept}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
