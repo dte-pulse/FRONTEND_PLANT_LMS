@@ -4,8 +4,46 @@ import apiClient from '@/api/client'
 import { toast } from 'sonner'
 import {
   BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Play,
-  Sparkles, Award, Clock, ArrowRight, RefreshCw
+  Sparkles, Award, Clock, ArrowRight, RefreshCw, Map, X, Lock
 } from 'lucide-react'
+
+const STATUS_CONFIG = {
+  completed:   { dot: 'bg-emerald-500', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-400', label: 'Completed' },
+  in_progress: { dot: 'bg-amber-500', border: 'border-amber-500/30', bg: 'bg-amber-500/10', text: 'text-amber-400', label: 'In Progress' },
+  locked:      { dot: 'bg-slate-700', border: 'border-slate-800', bg: 'bg-slate-900/60', text: 'text-slate-500', label: 'Locked' },
+}
+
+function getChildTitle(content, fallback) {
+  if (!content) return fallback
+  let cleanContent = content.trim()
+  if (cleanContent.startsWith('[Preceding Section:')) {
+    const closeBracketIdx = cleanContent.indexOf(']')
+    if (closeBracketIdx !== -1) {
+      cleanContent = cleanContent.slice(closeBracketIdx + 1).trim()
+      if (cleanContent.startsWith('...')) {
+        const firstNewlineIdx = cleanContent.indexOf('\n')
+        if (firstNewlineIdx !== -1) {
+          cleanContent = cleanContent.slice(firstNewlineIdx + 1).trim()
+        }
+      }
+    }
+  }
+  const lines = cleanContent.split('\n')
+  for (const line of lines) {
+    const clean = line
+      .replace(/<[^>]+>/g, '')
+      .replace(/\|\d+\|?/g, '')
+      .replace(/^#{1,6}\s+/, '')
+      .replace(/[*_`~]/g, '')
+      .replace(/[\{\}\/\*#`\[\]]/g, '')
+      .replace(/^\s*[-•>|]/g, '')
+      .trim()
+    if (clean.length > 3 && !/^[{}();,\\]/.test(clean)) return clean.length > 50 ? clean.slice(0, 47) + '…' : clean
+  }
+  return fallback
+}
+
+import MindMapModal from '@/components/shared/MindMapModal'
 
 export default function TraineeAssessmentsPage() {
   const navigate = useNavigate()
@@ -25,6 +63,58 @@ export default function TraineeAssessmentsPage() {
   const [passed, setPassed] = useState(false)
   const [feedback, setFeedback] = useState([])
   const [submitting, setSubmitting] = useState(false)
+
+  // Mind Map States
+  const [mindMapOpen, setMindMapOpen] = useState(false)
+  const [mindMapData, setMindMapData] = useState(null)
+  const [mindMapLoading, setMindMapLoading] = useState(false)
+
+  const fetchMindMap = async (docId) => {
+    setMindMapLoading(true)
+    setMindMapData(null)
+    setMindMapOpen(true)
+    try {
+      const res = await apiClient.get(`/learning/session/document/${docId}/mindmap`)
+      setMindMapData(res.data)
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to load mind map')
+      setMindMapOpen(false)
+    } finally {
+      setMindMapLoading(false)
+    }
+  }
+
+  const handleMindMapNodeClick = (nodeTitle) => {
+    if (view !== 'study' || !chunks?.length || !nodeTitle) return
+    const cleanSearch = nodeTitle.toLowerCase().trim()
+    
+    // Attempt exact or substring matching in chunks content to jump the user
+    const foundIdx = chunks.findIndex(c => {
+      const content = (c.content || '').toLowerCase()
+      return content.includes(cleanSearch)
+    })
+    
+    if (foundIdx !== -1) {
+      setActiveChunkIdx(foundIdx)
+      setMindMapOpen(false)
+      toast.success(`Jumped to: ${nodeTitle}`)
+    } else {
+      // If we can't find direct match, check if we can match any section numbers like "1.1"
+      const numberMatch = cleanSearch.match(/^(\d+\.\d+)/)
+      if (numberMatch) {
+        const numClean = numberMatch[1]
+        const fallbackIdx = chunks.findIndex(c => (c.content || '').toLowerCase().includes(numClean))
+        if (fallbackIdx !== -1) {
+          setActiveChunkIdx(fallbackIdx)
+          setMindMapOpen(false)
+          toast.success(`Jumped to section: ${numClean}`)
+          return
+        }
+      }
+      toast.info(`Viewing section: ${nodeTitle}`)
+    }
+  }
 
   const fetchData = async () => {
     setLoading(true)
@@ -75,7 +165,7 @@ export default function TraineeAssessmentsPage() {
     <div className="flex items-center justify-center py-20">
       <div className="relative">
         <div className="h-10 w-10 rounded-full border-4 border-slate-800 border-t-indigo-500 animate-spin" />
-        <Sparkles className="h-4 w-4 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <Sparkles className="h-4 w-4 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
       </div>
     </div>
   )
@@ -84,7 +174,7 @@ export default function TraineeAssessmentsPage() {
     <div className="space-y-6 pb-8 max-w-7xl mx-auto">
       {view === 'list' && (
         <div className="border-b border-slate-800/80 pb-5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">
             <Award className="h-3.5 w-3.5" /> SOP Qualifications
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Assessments & Exams</h1>
@@ -98,7 +188,7 @@ export default function TraineeAssessmentsPage() {
         <div>
           {loading && assignments.length === 0 ? spinner() : assignments.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-800 bg-[#161C2C]/50 p-16 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-3">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
                 <BookOpen className="h-7 w-7" />
               </div>
               <h3 className="text-base font-semibold text-slate-200">No active assigned SOPs</h3>
@@ -110,10 +200,10 @@ export default function TraineeAssessmentsPage() {
                 const doc = getDocDetails(assn.document_id)
                 const isCompleted = assn.document_status === 'completed' || assn.status === 'completed'
                 return (
-                  <div key={`assn-${assn.id || idx}-${assn.document_id || idx}`} className="rounded-3xl border border-slate-800 bg-[#161C2C] p-5 shadow-md flex flex-col justify-between hover:border-indigo-500/40 transition-all">
+                  <div key={`assn-${assn.id || idx}-${assn.document_id || idx}`} className="rounded-3xl border border-slate-800 bg-[#161C2C] p-5 shadow-md flex flex-col justify-between hover:border-emerald-500/40 transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
                           {doc.code || assn.document_code}
                         </span>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -128,9 +218,16 @@ export default function TraineeAssessmentsPage() {
                     <div className="pt-4 border-t border-slate-800 flex items-center justify-between mt-3 gap-2">
                       <button
                         onClick={() => navigate(`/trainee/learn/${assn.document_id}`)}
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-md"
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-md"
                       >
                         <Play className="h-3.5 w-3.5 fill-current" /> Start Adaptive Learning
+                      </button>
+                      <button
+                        onClick={() => fetchMindMap(assn.document_id)}
+                        className="px-3.5 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
+                        title="View Document Mind Map"
+                      >
+                        <Map className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -151,10 +248,20 @@ export default function TraineeAssessmentsPage() {
               >
                 <ChevronLeft className="h-3.5 w-3.5" /> Back to SOP list
               </button>
-              <h2 className="text-lg font-bold text-white">Study Mode: {getDocDetails(activeAssignment.document_id).code}</h2>
-              <p className="text-xs text-slate-400">{getDocDetails(activeAssignment.document_id).title}</p>
+              <div className="flex items-center gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-white">Study Mode: {getDocDetails(activeAssignment.document_id).code}</h2>
+                  <p className="text-xs text-slate-400">{getDocDetails(activeAssignment.document_id).title}</p>
+                </div>
+                <button
+                  onClick={() => fetchMindMap(activeAssignment.document_id)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-semibold text-emerald-300 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
+                >
+                  <Map className="h-3.5 w-3.5" /> Mind Map
+                </button>
+              </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-mono font-bold">
+            <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono font-bold">
               Chunk {activeChunkIdx + 1} of {chunks.length}
             </span>
           </div>
@@ -168,11 +275,11 @@ export default function TraineeAssessmentsPage() {
               </div>
 
               {chunks[activeChunkIdx].learning_card && (
-                <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-5">
-                  <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+                  <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
                     <Sparkles className="h-4 w-4" /> Key Learning Takeaway
                   </div>
-                  <p className="text-xs text-indigo-200 leading-relaxed font-medium">
+                  <p className="text-xs text-emerald-200 leading-relaxed font-medium">
                     {chunks[activeChunkIdx].learning_card}
                   </p>
                 </div>
@@ -182,7 +289,7 @@ export default function TraineeAssessmentsPage() {
                 <button
                   disabled={activeChunkIdx === 0}
                   onClick={() => setActiveChunkIdx(prev => prev - 1)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 disabled:opacity-30 transition-all"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800 disabled:opacity-30 transition-[color,background-color,border-color,box-shadow,transform,opacity]"
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous Section
                 </button>
@@ -190,14 +297,14 @@ export default function TraineeAssessmentsPage() {
                 {activeChunkIdx < chunks.length - 1 ? (
                   <button
                     onClick={() => setActiveChunkIdx(prev => prev + 1)}
-                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-all shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-sm"
                   >
                     Next Section <ChevronRight className="h-4 w-4" />
                   </button>
                 ) : (
                   <button
                     onClick={startExam}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-lg shadow-indigo-600/20"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-lg shadow-indigo-600/20"
                   >
                     Take Qualification Exam <ChevronRight className="h-4 w-4" />
                   </button>
@@ -246,14 +353,14 @@ export default function TraineeAssessmentsPage() {
                           key={key}
                           type="button"
                           onClick={() => handleSelectOption(q.id, key)}
-                          className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border text-xs text-left transition-all ${
+                          className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border text-xs text-left transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
                             isSelected
-                              ? 'border-indigo-500/50 bg-indigo-500/10 text-white font-semibold shadow-xs'
+                              ? 'border-emerald-500/50 bg-emerald-500/10 text-white font-semibold shadow-xs'
                               : 'border-slate-800 bg-[#0F1420] text-slate-300 hover:border-slate-700 hover:bg-slate-800/40'
                           }`}
                         >
                           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 transition-colors ${
-                            isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'
+                            isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
                           }`}>
                             {key}
                           </span>
@@ -269,7 +376,7 @@ export default function TraineeAssessmentsPage() {
                 <button
                   onClick={handleSubmitExam}
                   disabled={submitting}
-                  className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-md disabled:opacity-50"
+                  className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-md disabled:opacity-50"
                 >
                   {submitting ? 'Evaluating Answers...' : 'Submit Assessment'}
                 </button>
@@ -320,7 +427,7 @@ export default function TraineeAssessmentsPage() {
                       </div>
                       {item.explanation && (
                         <div className="text-[11px] text-slate-300 bg-[#0F1420] p-3 rounded-xl border border-slate-800 mt-2">
-                          <span className="font-semibold text-indigo-300">Explanation: </span>{item.explanation}
+                          <span className="font-semibold text-emerald-300">Explanation: </span>{item.explanation}
                         </div>
                       )}
                     </div>
@@ -334,7 +441,7 @@ export default function TraineeAssessmentsPage() {
             {passed ? (
               <button
                 onClick={() => setView('list')}
-                className="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-md"
+                className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-md"
               >
                 Back to Dashboard
               </button>
@@ -342,18 +449,39 @@ export default function TraineeAssessmentsPage() {
               <>
                 <button
                   onClick={() => setView('list')}
-                  className="px-5 py-2.5 rounded-2xl border border-slate-700 bg-[#161C2C] text-slate-200 hover:text-white text-xs font-semibold transition-all"
+                  className="px-5 py-2.5 rounded-2xl border border-slate-700 bg-[#161C2C] text-slate-200 hover:text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity]"
                 >
                   Dashboard
                 </button>
                 <button
                   onClick={() => setView('study')}
-                  className="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-md"
+                  className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-md"
                 >
                   Restudy Material
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Mind Map Modal */}
+      <MindMapModal
+        open={mindMapOpen && !mindMapLoading && !!mindMapData?.nodes?.length}
+        onClose={() => setMindMapOpen(false)}
+        docCode={activeAssignment ? getDocDetails(activeAssignment.document_id).code : ''}
+        docTitle={mindMapOpen && mindMapData ? mindMapData.document_title : ''}
+        nodes={mindMapOpen && mindMapData ? mindMapData.nodes : []}
+        onNodeClick={handleMindMapNodeClick}
+        hintText="to jump to that content"
+      />
+
+      {/* Loading Modal Overlay */}
+      {mindMapOpen && mindMapLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/90 backdrop-blur-lg">
+          <div className="flex flex-col items-center gap-4 bg-[#0B0F17] border border-slate-800 rounded-3xl p-10 shadow-2xl">
+            <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent animate-spin rounded-full" />
+            <p className="text-sm text-slate-300 font-medium">Building document mind map tree...</p>
           </div>
         </div>
       )}

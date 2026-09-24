@@ -2,11 +2,11 @@ import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  'inline-flex items-center justify-center rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.98]',
   {
     variants: {
       variant: {
-        primary: 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-xs border border-indigo-500/40 font-bold',
+        primary: 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-lg shadow-emerald-950/15 border border-emerald-400/30 font-bold',
         secondary: 'bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700/80',
         outline: 'bg-transparent text-slate-300 hover:bg-slate-800/60 hover:text-white border border-slate-700/80',
         ghost: 'bg-transparent text-slate-300 hover:bg-slate-800/50 hover:text-white',
@@ -27,7 +27,6 @@ const buttonVariants = cva(
   }
 )
 
-export function Button({ className, variant, size, ...props }) {
-  return <button className={cn(buttonVariants({ variant, size, className }))} {...props} />
+export function Button({ className, variant, size, loading = false, children, disabled, ...props }) {
+  return <button className={cn(buttonVariants({ variant, size, className }))} disabled={disabled || loading} aria-busy={loading || undefined} {...props}>{children}</button>
 }
-

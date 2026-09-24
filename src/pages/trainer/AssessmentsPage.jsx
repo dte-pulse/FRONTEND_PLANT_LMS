@@ -165,7 +165,7 @@ export default function AssessmentsPage() {
         <Card className="self-start">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <BrainCircuit className="h-5 w-5 text-indigo-400" />
+              <BrainCircuit className="h-5 w-5 text-emerald-400" />
               AI MCQ Engine
             </CardTitle>
             <CardDescription className="text-slate-400">
@@ -201,13 +201,13 @@ export default function AssessmentsPage() {
               <div className="border border-white/10 bg-white/5 p-4 rounded-2xl space-y-2 text-sm text-slate-300">
                 <p className="flex justify-between"><span className="text-slate-400">Topic:</span> <span className="font-semibold text-white">{selectedDoc.topic}</span></p>
                 <p className="flex justify-between"><span className="text-slate-400">Version:</span> <span className="font-mono">{selectedDoc.version}</span></p>
-                <p className="flex justify-between"><span className="text-slate-400">Scope:</span> <span className="font-mono text-indigo-300">{selectedDoc.qa_scope}</span></p>
+                <p className="flex justify-between"><span className="text-slate-400">Scope:</span> <span className="font-mono text-emerald-300">{selectedDoc.qa_scope}</span></p>
               </div>
             )}
 
             <div className="pt-4 border-t border-slate-800/80 space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-indigo-400" />
+                <Sparkles className="h-4 w-4 text-emerald-400" />
                 Generator Options
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -307,7 +307,7 @@ export default function AssessmentsPage() {
                       {Object.entries(mcq.options).map(([key, val]) => (
                         <div 
                           key={key} 
-                          className={`flex items-center gap-3 p-3 rounded-2xl border text-sm transition-all duration-200 ${
+                          className={`flex items-center gap-3 p-3 rounded-2xl border text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-200 ${
                             mcq.correct_option === key 
                               ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-200' 
                               : 'bg-white/5 border-white/5 text-slate-300'

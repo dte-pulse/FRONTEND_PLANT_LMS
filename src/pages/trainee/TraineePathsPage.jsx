@@ -40,7 +40,7 @@ export default function TraineePathsPage() {
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="relative">
         <div className="h-12 w-12 rounded-full border-4 border-slate-800 border-t-indigo-500 animate-spin" />
-        <Sparkles className="h-5 w-5 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <Sparkles className="h-5 w-5 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
       </div>
     </div>
   )
@@ -49,7 +49,7 @@ export default function TraineePathsPage() {
     <div className="space-y-6 pb-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="border-b border-slate-800/80 pb-5">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">
           <Route className="h-3.5 w-3.5" /> Structured Curriculum
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-white">My Training Paths</h1>
@@ -60,7 +60,7 @@ export default function TraineePathsPage() {
 
       {paths.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-slate-800 bg-[#161C2C]/50 p-16 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-3">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
             <Route className="h-7 w-7" />
           </div>
           <h3 className="text-base font-semibold text-slate-200">No training paths assigned yet</h3>
@@ -74,22 +74,22 @@ export default function TraineePathsPage() {
               <div
                 key={path.id}
                 onClick={() => openPathDetail(path)}
-                className="group relative rounded-3xl border border-slate-800 bg-[#161C2C] p-6 hover:border-indigo-500/40 hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                className="group relative rounded-3xl border border-slate-800 bg-[#161C2C] p-6 hover:border-emerald-500/40 hover:shadow-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300 cursor-pointer flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                         <Route className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-white group-hover:text-indigo-300 transition-colors">
+                        <h3 className="font-bold text-white group-hover:text-emerald-300 transition-colors">
                           {path.name}
                         </h3>
                         <span className="text-[11px] text-slate-400 font-medium">{path.documents_count || 0} SOP Documents</span>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="h-5 w-5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-[color,background-color,border-color,box-shadow,transform,opacity]" />
                   </div>
 
                   {path.description && (
@@ -102,11 +102,11 @@ export default function TraineePathsPage() {
                 <div className="space-y-3 pt-4 border-t border-slate-800">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-400 font-medium">Progress ({path.completed_modules || 0}/{path.total_modules || 0} modules)</span>
-                    <span className="font-bold text-indigo-400 font-mono">{progress}%</span>
+                    <span className="font-bold text-emerald-400 font-mono">{progress}%</span>
                   </div>
                   <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-500"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -138,7 +138,7 @@ export default function TraineePathsPage() {
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <span className="text-xs uppercase font-bold tracking-wider text-indigo-400">Path Breakdown</span>
+                <span className="text-xs uppercase font-bold tracking-wider text-emerald-400">Path Breakdown</span>
                 <h2 className="text-xl font-bold text-white mt-1 pr-8">{selectedPath.name}</h2>
                 {selectedPath.description && (
                   <p className="mt-2 text-xs text-slate-300 leading-relaxed">{selectedPath.description}</p>
@@ -173,13 +173,13 @@ export default function TraineePathsPage() {
                     {modules.map((mod, idx) => (
                       <div
                         key={mod.id}
-                        className="rounded-2xl border border-slate-800 bg-[#161C2C] p-4 shadow-xs hover:border-indigo-500/40 transition-all"
+                        className="rounded-2xl border border-slate-800 bg-[#161C2C] p-4 shadow-xs hover:border-emerald-500/40 transition-[color,background-color,border-color,box-shadow,transform,opacity]"
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                             mod.completed
                               ? 'bg-emerald-500 text-white'
-                              : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                           }`}>
                             {mod.completed ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
                           </div>
@@ -196,7 +196,7 @@ export default function TraineePathsPage() {
                           ) : (
                             <button
                               onClick={e => { e.stopPropagation(); if (mod.document_id) navigate(`/trainee/learn/${mod.document_id}`) }}
-                              className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+                              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-sm"
                             >
                               <Play className="h-3 w-3 fill-current" /> Start
                             </button>
@@ -212,7 +212,7 @@ export default function TraineePathsPage() {
             <div className="p-4 border-t border-slate-800 bg-[#161C2C] text-right">
               <button
                 onClick={() => setShowDetail(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-[color,background-color,border-color,box-shadow,transform,opacity]"
               >
                 Close Drawer
               </button>

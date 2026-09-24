@@ -90,10 +90,10 @@ export default function NotificationsPage() {
         <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/10">
           <div>
             <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
-              <Bell className="h-5 w-5 text-indigo-400" />
+              <Bell className="h-5 w-5 text-emerald-400" />
               Notification Center
               {unreadCount > 0 && (
-                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-indigo-600 text-white text-xs font-bold">
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-emerald-600 text-white text-xs font-bold">
                   {unreadCount}
                 </span>
               )}
@@ -118,9 +118,9 @@ export default function NotificationsPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all capitalize ${
+              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform,opacity] capitalize ${
                 filter === f
-                  ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                   : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:bg-slate-800'
               }`}
             >

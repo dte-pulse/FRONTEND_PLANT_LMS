@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import { BookOpenCheck } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const ChunkCard = ({ chunk, onUnderstood }) => {
   return (
-    <div className="bg-[#131825] p-6 rounded-2xl border border-slate-800/80 shadow-md">
+    <article className="bg-[#131825] p-6 rounded-2xl border border-slate-800/80 shadow-md shadow-emerald-950/10">
       <div className="flex justify-between items-start mb-4 border-b border-slate-800 pb-3">
-        <h2 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
-          Page {chunk.page_no || '1'}
+        <h2 className="text-sm font-bold text-slate-200">
+          Learning page {chunk.page_no || '1'}
         </h2>
       </div>
       
@@ -15,10 +15,10 @@ const ChunkCard = ({ chunk, onUnderstood }) => {
       </div>
       
       {chunk.learning_card && (
-        <div className="bg-indigo-500/10 p-4 rounded-xl mb-6 border border-indigo-500/20">
-          <h3 className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1">Key Takeaways</h3>
-          <p className="text-xs text-indigo-200 leading-relaxed">{chunk.learning_card}</p>
-        </div>
+        <aside className="bg-emerald-500/10 p-4 rounded-xl mb-6 border border-emerald-500/20">
+          <h3 className="flex items-center gap-2 text-xs font-bold text-emerald-300 mb-1"><BookOpenCheck className="h-3.5 w-3.5" aria-hidden="true" />Key takeaways</h3>
+          <p className="text-xs text-emerald-100 leading-relaxed">{chunk.learning_card}</p>
+        </aside>
       )}
 
       <div className="flex justify-end border-t pt-4 border-slate-800/80">
@@ -26,9 +26,8 @@ const ChunkCard = ({ chunk, onUnderstood }) => {
           I understand this content
         </Button>
       </div>
-    </div>
-  );
-};
+    </article>
+  )
+}
 
-export default ChunkCard;
-
+export default ChunkCard

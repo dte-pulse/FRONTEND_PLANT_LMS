@@ -71,13 +71,13 @@ export default function TrainerDashboardPage() {
       <div className="relative overflow-hidden rounded-3xl border border-slate-800/80 bg-[#161C2C] p-6 md:p-8 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-400">Trainer Workspace</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Trainer Workspace</p>
             <h2 className="mt-1 text-2xl md:text-3xl font-bold tracking-tight text-white">{greeting}, Trainer</h2>
             <p className="mt-1 text-xs text-slate-400">{today}</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/30 px-4 py-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Active Sessions</p>
+            <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Active Sessions</p>
               <p className="text-lg font-bold text-white">{loading ? '...' : activeAssignments.length}</p>
             </div>
             <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-2.5">
@@ -99,14 +99,14 @@ export default function TrainerDashboardPage() {
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-1 shadow-sm">
           <CardHeader>
-            <CardTitle><span className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-indigo-400" /> Quick Actions</span></CardTitle>
+            <CardTitle><span className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-emerald-400" /> Quick Actions</span></CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {quickActions.map(action => (
               <button key={action.label} onClick={() => navigate(action.route)}
-                className="w-full rounded-xl border border-slate-800 bg-[#131825] hover:bg-slate-800/60 p-4 text-left transition-all cursor-pointer">
+                className="w-full rounded-xl border border-slate-800 bg-[#131825] hover:bg-slate-800/60 p-4 text-left transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-slate-800 p-2.5 text-indigo-400"><action.icon className="h-5 w-5" /></div>
+                  <div className="rounded-lg bg-slate-800 p-2.5 text-emerald-400"><action.icon className="h-5 w-5" /></div>
                   <div className="flex-1">
                     <p className="text-xs font-bold text-white">{action.label}</p>
                     <p className="text-[11px] text-slate-400 mt-0.5">Click to open</p>
@@ -138,7 +138,7 @@ export default function TrainerDashboardPage() {
                       </div>
                       <div className="relative">
                         <div className="absolute -left-[25px] top-0.5 h-5 w-5 rounded-full bg-indigo-100 border-2 border-indigo-300 flex items-center justify-center">
-                          <FileText className="h-2.5 w-2.5 text-indigo-500" />
+                          <FileText className="h-2.5 w-2.5 text-emerald-500" />
                         </div>
                         <p className="text-sm text-slate-900 font-medium">Assessment created</p>
                         <p className="text-xs text-slate-500 mt-0.5">New MCQ assessment generated.</p>
@@ -163,10 +163,10 @@ export default function TrainerDashboardPage() {
                 <div className="flex justify-center py-8"><div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-transparent" /></div>
               ) : (
                 <div className="space-y-3">
-                  <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-all shadow-sm">
+                  <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-sm">
                     <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-indigo-50 flex flex-col items-center justify-center text-center">
-                      <span className="text-[10px] text-indigo-500 font-medium uppercase">Mon</span>
-                      <span className="text-sm font-bold text-indigo-600 -mt-0.5">24</span>
+                      <span className="text-[10px] text-emerald-500 font-medium uppercase">Mon</span>
+                      <span className="text-sm font-bold text-emerald-600 -mt-0.5">24</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-900 truncate">JavaScript Fundamentals — Session 3</p>
@@ -174,7 +174,7 @@ export default function TrainerDashboardPage() {
                     </div>
                     <Badge>Today</Badge>
                   </div>
-                  <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-all shadow-sm">
+                  <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-sm">
                     <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-50 flex flex-col items-center justify-center text-center">
                       <span className="text-[10px] text-emerald-500 font-medium uppercase">Wed</span>
                       <span className="text-sm font-bold text-emerald-600 -mt-0.5">26</span>
@@ -239,10 +239,10 @@ export default function TrainerDashboardPage() {
             ) : (
               <div className="space-y-4">
                 {activeAssignments.slice(0, 6).map(a => (
-                  <div key={a.assignment_id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 hover:border-slate-300 transition-all">
+                  <div key={a.assignment_id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 hover:border-slate-300 transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 flex-shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-emerald-600 flex-shrink-0">
                           {a.trainee_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '??'}
                         </div>
                         <div className="min-w-0">
@@ -262,7 +262,7 @@ export default function TrainerDashboardPage() {
                   </div>
                 ))}
                 {activeAssignments.length > 6 && (
-                  <button className="w-full text-center text-xs text-indigo-500 hover:text-indigo-700 py-2 transition-all cursor-pointer">
+                  <button className="w-full text-center text-xs text-emerald-500 hover:text-emerald-700 py-2 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer">
                     View all {activeAssignments.length} active trainees <ArrowRight className="h-3 w-3 inline" />
                   </button>
                 )}

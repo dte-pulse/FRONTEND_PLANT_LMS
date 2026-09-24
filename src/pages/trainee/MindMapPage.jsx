@@ -47,7 +47,7 @@ export default function MindMapPage() {
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
       <div className="relative">
         <div className="h-10 w-10 rounded-full border-4 border-slate-800 border-t-indigo-500 animate-spin" />
-        <Sparkles className="h-4 w-4 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <Sparkles className="h-4 w-4 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
       </div>
       <p className="text-xs font-medium text-slate-400">Building knowledge graph...</p>
     </div>
@@ -79,12 +79,12 @@ export default function MindMapPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 rounded-xl border border-slate-800 bg-[#131825] text-slate-400 hover:text-white hover:border-slate-700 transition-all shadow-xs"
+            className="p-2 rounded-xl border border-slate-800 bg-[#131825] text-slate-400 hover:text-white hover:border-slate-700 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-0.5">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-0.5">
               <Map className="h-3.5 w-3.5" /> Interactive Mind Map
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">{mapData.document_title}</h1>
@@ -94,11 +94,11 @@ export default function MindMapPage() {
         <div className="flex items-center gap-3">
           <div className="text-right">
             <p className="text-[11px] text-slate-400 font-medium">{completedParents} of {totalParents} sections</p>
-            <p className="text-xs font-bold text-indigo-400">{Math.round(overallScore)}% avg score</p>
+            <p className="text-xs font-bold text-emerald-400">{Math.round(overallScore)}% avg score</p>
           </div>
           <button
             onClick={() => navigate(`/trainee/learn/${documentId}`)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-xs"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
           >
             <BookOpen className="h-3.5 w-3.5" /> Continue Session
           </button>
@@ -109,10 +109,10 @@ export default function MindMapPage() {
       <div className="rounded-2xl border border-slate-800/80 bg-[#131825] p-5 shadow-sm space-y-3">
         <div className="flex items-center justify-between text-xs font-semibold">
           <span className="text-slate-300">Overall Concept Mastery</span>
-          <span className="text-indigo-400 font-bold">{progressPct}%</span>
+          <span className="text-emerald-400 font-bold">{progressPct}%</span>
         </div>
         <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
-          <div className="h-full rounded-full bg-indigo-500 transition-all duration-700" style={{ width: `${progressPct}%` }} />
+          <div className="h-full rounded-full bg-emerald-500 transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-700" style={{ width: `${progressPct}%` }} />
         </div>
         <div className="flex gap-5 pt-1 text-[11px] text-slate-400 font-medium">
           {[{ color: 'bg-emerald-400', label: 'Completed' }, { color: 'bg-amber-400', label: 'In Progress' }, { color: 'bg-slate-600', label: 'Locked' }].map(({ color, label }) => (
@@ -123,7 +123,7 @@ export default function MindMapPage() {
 
       {/* Diff Legend / Banner */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-slate-800 bg-[#131825]/40 px-5 py-3 text-xs font-medium text-slate-400">
-        <span className="text-slate-200 font-bold flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Version Diff Legend:</span>
+        <span className="text-slate-200 font-bold flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-emerald-400" /> Version Diff Legend:</span>
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-400" />
           <span>New in this upload</span>
@@ -141,10 +141,10 @@ export default function MindMapPage() {
       {/* Root Node */}
       <div className="flex justify-center">
         <div className="flex flex-col items-center">
-          <div className="rounded-2xl border border-indigo-500/30 bg-[#161C2C] px-6 py-4 text-center max-w-sm shadow-xl text-white">
-            <Map className="h-5 w-5 text-indigo-400 mx-auto mb-1.5" />
+          <div className="rounded-2xl border border-emerald-500/30 bg-[#161C2C] px-6 py-4 text-center max-w-sm shadow-xl text-white">
+            <Map className="h-5 w-5 text-emerald-400 mx-auto mb-1.5" />
             <h3 className="text-sm font-bold truncate text-white">{mapData.document_title}</h3>
-            <p className="text-[10px] text-indigo-300 mt-0.5 font-mono">{mapData.total_parents} Document Sections</p>
+            <p className="text-[10px] text-emerald-300 mt-0.5 font-mono">{mapData.total_parents} Document Sections</p>
           </div>
           <div className="w-px h-6 bg-slate-800" />
         </div>
@@ -162,7 +162,7 @@ export default function MindMapPage() {
                 onClick={() => parent.version_status !== 'removed' && navigate(`/trainee/learn/${documentId}`)}
                 onMouseEnter={() => setHoveredNode(`parent_${pi}`)}
                 onMouseLeave={() => setHoveredNode(null)}
-                className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 ${cfg.bg} ${cfg.border} ${isHovered && parent.version_status !== 'removed' ? 'scale-[1.02] shadow-md' : 'shadow-xs'} ${parent.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
+                className={`w-full rounded-2xl border p-4 text-left transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-200 ${cfg.bg} ${cfg.border} ${isHovered && parent.version_status !== 'removed' ? 'scale-[1.02] shadow-md' : 'shadow-xs'} ${parent.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
                 disabled={parent.version_status === 'removed'}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -205,14 +205,14 @@ export default function MindMapPage() {
                       onClick={() => child.version_status !== 'removed' && navigate(`/trainee/learn/${documentId}`)}
                       onMouseEnter={() => setHoveredNode(`child_${pi}_${ci}`)}
                       onMouseLeave={() => setHoveredNode(null)}
-                      className={`w-full rounded-xl border px-3.5 py-2.5 text-left transition-all duration-150 ${childCfg.bg} ${childCfg.border} ${isChildHovered && child.version_status !== 'removed' ? 'scale-[1.02]' : ''} ${child.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
+                      className={`w-full rounded-xl border px-3.5 py-2.5 text-left transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-150 ${childCfg.bg} ${childCfg.border} ${isChildHovered && child.version_status !== 'removed' ? 'scale-[1.02]' : ''} ${child.version_status === 'removed' ? 'opacity-50 cursor-not-allowed border-dashed border-slate-700 bg-slate-900/30' : ''}`}
                       disabled={child.version_status === 'removed'}
                     >
                       <div className="flex items-center gap-2">
                         <div className={`h-2 w-2 rounded-full shrink-0 ${child.version_status === 'removed' ? 'bg-slate-600' : childCfg.dot}`} />
                         <span className={`text-[11px] font-semibold truncate flex-1 ${child.version_status === 'removed' ? 'line-through text-slate-500' : childCfg.text}`}>{child.title ?? `Sub-topic ${child.child_index}`}</span>
                         {getVersionBadge(child.version_status)}
-                        {child.knowledge_score > 0 && <span className="text-[10px] font-mono font-bold shrink-0 text-indigo-400">{Math.round(child.knowledge_score)}%</span>}
+                        {child.knowledge_score > 0 && <span className="text-[10px] font-mono font-bold shrink-0 text-emerald-400">{Math.round(child.knowledge_score)}%</span>}
                         {child.status === 'locked' && <Lock className="h-3 w-3 text-slate-600 shrink-0" />}
                         {child.is_passed && <CheckCircle2 className="h-3 w-3 text-emerald-400 shrink-0" />}
                       </div>
@@ -235,7 +235,7 @@ export default function MindMapPage() {
           { icon: Trophy, value: `${progressPct}%`, label: 'Overall Completion' },
         ].map(({ icon: Icon, value, label }) => (
           <div key={label} className="rounded-2xl border border-slate-800/80 bg-[#131825] p-4 text-center shadow-xs">
-            <Icon className="h-4 w-4 mx-auto mb-1.5 text-indigo-400" />
+            <Icon className="h-4 w-4 mx-auto mb-1.5 text-emerald-400" />
             <p className="text-lg font-bold text-white">{value}</p>
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">{label}</p>
           </div>

@@ -35,7 +35,7 @@ export default function ProgressPage() {
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="relative">
         <div className="h-12 w-12 rounded-full border-4 border-slate-800 border-t-indigo-500 animate-spin" />
-        <Sparkles className="h-5 w-5 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <Sparkles className="h-5 w-5 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
       </div>
     </div>
   )
@@ -47,7 +47,7 @@ export default function ProgressPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">
             <BarChart3 className="h-3.5 w-3.5" /> Performance & Analytics
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">My Progress Center</h1>
@@ -55,7 +55,7 @@ export default function ProgressPage() {
         </div>
         <button
           onClick={fetchData}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-[#161C2C] text-slate-200 hover:text-white hover:border-indigo-500/40 text-xs font-semibold transition-all shadow-xs self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-[#161C2C] text-slate-200 hover:text-white hover:border-emerald-500/40 text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs self-start sm:self-auto"
         >
           <RefreshCw className="h-3.5 w-3.5" /> Refresh Stats
         </button>
@@ -64,7 +64,7 @@ export default function ProgressPage() {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Assigned', value: s.total_assignments ?? 0, icon: BookOpen, bg: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' },
+          { label: 'Total Assigned', value: s.total_assignments ?? 0, icon: BookOpen, bg: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
           { label: 'Completed SOPs', value: s.completed ?? 0, icon: CheckCircle2, bg: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
           { label: 'Avg Pass Rate', value: `${s.avg_completion_pct ?? 0}%`, icon: BarChart3, bg: 'bg-purple-500/10 text-purple-400 border border-purple-500/20' },
           { label: 'Weak Topics', value: s.weak_topics ?? 0, icon: AlertTriangle, bg: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
@@ -94,9 +94,9 @@ export default function ProgressPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] whitespace-nowrap ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-md'
+                  ? 'bg-emerald-600 text-white shadow-md'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
@@ -118,7 +118,7 @@ export default function ProgressPage() {
               <p className="text-xs text-slate-400 mt-1">Start studying your assigned SOPs from the assessments tab.</p>
               <button
                 onClick={() => navigate('/trainee/assessments')}
-                className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+                className="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
               >
                 Go to SOP Assignments →
               </button>
@@ -126,13 +126,13 @@ export default function ProgressPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {dashboard?.in_progress?.map((doc) => (
-                <div key={doc.document_id} className="rounded-2xl border border-slate-800/80 bg-[#131825] p-5 shadow-sm hover:border-slate-700/80 transition-all flex flex-col justify-between">
+                <div key={doc.document_id} className="rounded-2xl border border-slate-800/80 bg-[#131825] p-5 shadow-sm hover:border-slate-700/80 transition-[color,background-color,border-color,box-shadow,transform,opacity] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
                         {doc.document_code}
                       </span>
-                      <span className="text-xs font-bold text-indigo-400">
+                      <span className="text-xs font-bold text-emerald-400">
                         {doc.completion_percentage}%
                       </span>
                     </div>
@@ -141,7 +141,7 @@ export default function ProgressPage() {
 
                   <div className="mt-4 space-y-3 pt-3 border-t border-slate-800/80">
                     <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                      <div className="h-full rounded-full bg-indigo-500 transition-all duration-500" style={{ width: `${doc.completion_percentage}%` }} />
+                      <div className="h-full rounded-full bg-emerald-500 transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-500" style={{ width: `${doc.completion_percentage}%` }} />
                     </div>
 
                     <div className="flex items-center justify-between text-xs">
@@ -150,7 +150,7 @@ export default function ProgressPage() {
                       </span>
                       <button
                         onClick={() => navigate(`/trainee/learn/${doc.document_id}`)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-semibold text-xs border border-indigo-500/30 transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white font-semibold text-xs border border-emerald-500/30 transition-[color,background-color,border-color,box-shadow,transform,opacity]"
                       >
                         <Play className="h-3 w-3 fill-current" /> Resume
                       </button>
@@ -232,7 +232,7 @@ export default function ProgressPage() {
             </div>
           ) : (
             dashboard?.weak_areas?.map((w, i) => (
-              <div key={i} className="rounded-2xl border border-slate-800/80 bg-[#131825] p-5 flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-sm hover:border-slate-700/80 transition-all">
+              <div key={i} className="rounded-2xl border border-slate-800/80 bg-[#131825] p-5 flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-sm hover:border-slate-700/80 transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-bold text-white">{w.topic_title || `Topic #${w.topic_id}`}</h4>
@@ -253,7 +253,7 @@ export default function ProgressPage() {
 
                 <button
                   onClick={() => navigate(`/trainee/learn/${w.document_id}`)}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-bold text-xs border border-indigo-500/30 transition-all shadow-xs"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-xs border border-emerald-500/30 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
                 >
                   Review Topic <ChevronRight className="h-3.5 w-3.5" />
                 </button>

@@ -43,11 +43,11 @@ export default function AdminDashboardPage() {
         <p className='mt-2 text-sm text-slate-400'>Monitor assignments, qualification gaps, overdue learning, and retraining signals.</p>
         <div className='mt-4 flex gap-3'>
           <button onClick={() => navigate('/admin/reports')}
-            className='px-4 py-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold text-sm transition-all'>
+            className='px-4 py-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity]'>
             Review Overdue Training
           </button>
           <button onClick={() => navigate('/admin/documents')}
-            className='px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-sm text-white transition-all'>
+            className='px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-sm text-white transition-[color,background-color,border-color,box-shadow,transform,opacity]'>
             Open Document Control
           </button>
         </div>

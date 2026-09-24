@@ -293,11 +293,11 @@ export default function QualificationPage() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowRequestModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-all">
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                   Cancel
                 </button>
                 <button type="submit" disabled={creatingRequest}
-                  className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all disabled:opacity-50 shadow-xs">
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50 shadow-xs">
                   {creatingRequest ? 'Submitting…' : 'Submit Request'}
                 </button>
               </div>
@@ -334,7 +334,7 @@ export default function QualificationPage() {
 
               <div className="rounded-2xl border border-slate-800/80 bg-[#161C2C] p-4 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Paperclip className="h-4 w-4 text-indigo-400" />
+                  <Paperclip className="h-4 w-4 text-emerald-400" />
                   <p className="text-xs font-bold uppercase tracking-wider text-white">Evidence</p>
                 </div>
 
@@ -342,13 +342,13 @@ export default function QualificationPage() {
                   <input
                     value={reviewEvidenceLabel}
                     onChange={e => setReviewEvidenceLabel(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
                     placeholder="Certificate, approval attachment, supporting file"
                   />
                   <input
                     type="file"
                     onChange={e => setReviewEvidenceFile(e.target.files?.[0] || null)}
-                    className="w-full text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20 cursor-pointer"
+                    className="w-full text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500/10 file:text-emerald-300 hover:file:bg-emerald-500/20 cursor-pointer"
                   />
                   <div className="flex justify-end">
                     <Button type="submit" disabled={uploadingEvidence}>
@@ -387,7 +387,7 @@ export default function QualificationPage() {
                 <button
                   type="button"
                   onClick={() => setReviewingAssignment(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-all"
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity]"
                 >
                   Cancel
                 </button>
@@ -395,7 +395,7 @@ export default function QualificationPage() {
                   type="button"
                   onClick={() => handleReview(reviewingAssignment.id, false)}
                   disabled={submittingId === reviewingAssignment.id}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500/90 hover:bg-red-500 text-white font-bold text-sm transition-all disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl bg-red-500/90 hover:bg-red-500 text-white font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50"
                 >
                   {submittingId === reviewingAssignment.id ? 'Saving…' : 'Reject'}
                 </button>
@@ -403,7 +403,7 @@ export default function QualificationPage() {
                   type="button"
                   onClick={() => handleReview(reviewingAssignment.id, true)}
                   disabled={submittingId === reviewingAssignment.id}
-                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50"
                 >
                   {submittingId === reviewingAssignment.id ? 'Saving…' : 'Approve'}
                 </button>

@@ -75,19 +75,19 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-[#0B0F17] px-4 py-10 text-white font-sans selection:bg-indigo-500 selection:text-white'>
+    <div className='flex min-h-screen items-center justify-center bg-[#0B0F17] px-4 py-10 text-white font-sans selection:bg-emerald-500 selection:text-white'>
       <div className='w-full max-w-md rounded-3xl border border-slate-800/80 bg-[#161C2C] p-8 shadow-xl backdrop-blur-xl md:p-10'>
         <div className='mb-6 flex flex-col items-center text-center'>
-          <div className='rounded-xl bg-indigo-600/20 p-3.5 text-indigo-300 border border-indigo-500/30 mb-3'>
+          <div className='rounded-xl bg-emerald-600/20 p-3.5 text-emerald-300 border border-emerald-500/30 mb-3'>
             {step === 'email' && <Mail className='h-7 w-7' />}
             {step === 'otp' && <ShieldCheck className='h-7 w-7' />}
             {step === 'reset' && <KeyRound className='h-7 w-7' />}
           </div>
-          <h2 className='text-xl font-bold text-white'>
+          <h1 className='text-xl font-bold text-white text-balance'>
             {step === 'email' && 'Forgot Password'}
             {step === 'otp' && 'Verify OTP'}
             {step === 'reset' && 'Create New Password'}
-          </h2>
+          </h1>
           <p className='mt-1.5 text-xs text-slate-400'>
             {step === 'email' && 'Enter your registered email to receive a reset code.'}
             {step === 'otp' && `We sent a code to ${email}.`}
@@ -98,12 +98,16 @@ export default function ForgotPasswordPage() {
         {step === 'email' && (
           <form className='space-y-4' onSubmit={handleRequestOtp}>
             <div>
-              <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-400'>Email Address</label>
+              <label htmlFor='reset-email' className='mb-1.5 block text-xs font-semibold tracking-wide text-slate-400'>Email address</label>
               <Input 
+                id='reset-email'
+                name='email'
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder='john.doe@company.com' 
+                placeholder='e.g. name@company.com'
+                autoComplete='email'
+                spellCheck={false}
                 disabled={submitting}
               />
             </div>
@@ -119,12 +123,16 @@ export default function ForgotPasswordPage() {
         {step === 'otp' && (
           <form className='space-y-4' onSubmit={handleVerifyOtp}>
             <div>
-              <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-400'>One-Time Password (OTP)</label>
+              <label htmlFor='reset-otp' className='mb-1.5 block text-xs font-semibold tracking-wide text-slate-400'>One-time password</label>
               <Input 
+                id='reset-otp'
+                name='one-time-code'
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder='123456' 
+                placeholder='e.g. 123456'
                 className="text-center tracking-widest font-mono text-lg"
+                inputMode='numeric'
+                autoComplete='one-time-code'
                 disabled={submitting}
               />
             </div>
@@ -140,12 +148,15 @@ export default function ForgotPasswordPage() {
         {step === 'reset' && (
           <form className='space-y-4' onSubmit={handleResetPassword}>
             <div>
-              <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-400'>New Password</label>
+              <label htmlFor='new-password' className='mb-1.5 block text-xs font-semibold tracking-wide text-slate-400'>New password</label>
               <Input 
+                id='new-password'
+                name='newPassword'
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder='Minimum 6 characters' 
+                placeholder='At least 6 characters'
+                autoComplete='new-password'
                 disabled={submitting}
               />
             </div>

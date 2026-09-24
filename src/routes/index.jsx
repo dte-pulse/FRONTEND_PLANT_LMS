@@ -8,6 +8,7 @@ import DocumentsPage from '@/pages/admin/DocumentsPage'
 import TrainingPage from '@/pages/admin/TrainingPage'
 import ReportsPage from '@/pages/admin/ReportsPage'
 import NotificationsPage from '@/pages/admin/NotificationsPage'
+import ObservabilityPage from '@/pages/admin/ObservabilityPage'
 import MasterDataPage from '@/pages/admin/MasterDataPage'
 import HodDashboardPage from '@/pages/hod/HodDashboardPage'
 import CalendarPage from '@/pages/hod/CalendarPage'
@@ -21,6 +22,7 @@ import MaterialsPage from '@/pages/trainer/MaterialsPage'
 import TraineeDashboardPage from '@/pages/trainee/TraineeDashboardPage'
 import TraineePathsPage from '@/pages/trainee/TraineePathsPage'
 import ProgressPage from '@/pages/trainee/ProgressPage'
+import CapabilityPage from '@/pages/trainee/CapabilityPage'
 import QaPage from '@/pages/trainee/QaPage'
 import TraineeAssessmentsPage from '@/pages/trainee/AssessmentsPage'
 import DocViewPage from '@/pages/trainee/DocViewPage'
@@ -39,6 +41,7 @@ const router = createBrowserRouter([
       { path: 'documents', element: <DocumentsPage /> },
       { path: 'training', element: <TrainingPage /> },
       { path: 'reports', element: <ReportsPage /> },
+      { path: 'observability', element: <ObservabilityPage /> },
       { path: 'notifications', element: <NotificationsPage /> },
       { path: 'master-data', element: <MasterDataPage /> },
     ],
@@ -71,6 +74,8 @@ const router = createBrowserRouter([
       { index: true, element: <TraineeDashboardPage /> },
       { path: 'paths', element: <TraineePathsPage /> },
       { path: 'progress', element: <ProgressPage /> },
+      { path: 'capability', element: <CapabilityPage /> },
+      { path: 'capability/:documentId', element: <CapabilityPage /> },
       { path: 'qa', element: <QaPage /> },
       { path: 'assessments', element: <TraineeAssessmentsPage /> },
       { path: 'document/:documentId', element: <DocViewPage /> },

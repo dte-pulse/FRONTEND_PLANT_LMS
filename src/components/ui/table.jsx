@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 
 export function Table({ children, className }) {
-  return <div className={cn('overflow-hidden rounded-2xl border border-slate-800/80 bg-[#131825]', className)}>{children}</div>
+  return <div className={cn('overflow-x-auto overscroll-contain rounded-2xl border border-slate-800/80 bg-[#131825]', className)}>{children}</div>
 }
 
 export function TableRoot({ children, className }) {
@@ -9,7 +9,7 @@ export function TableRoot({ children, className }) {
 }
 
 export function TableHead({ children, className }) {
-  return <thead className={cn('bg-[#161C2C] text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800/80', className)}>{children}</thead>
+  return <thead className={cn('bg-[#161C2C] text-[10px] font-bold tracking-wider text-slate-400 border-b border-slate-800/80', className)}>{children}</thead>
 }
 
 export function TableBody({ children, className }) {
@@ -17,7 +17,7 @@ export function TableBody({ children, className }) {
 }
 
 export function TableRow({ children, className }) {
-  return <tr className={cn('hover:bg-slate-800/40 transition-colors', className)}>{children}</tr>
+  return <tr className={cn('hover:bg-slate-800/40 focus-within:bg-emerald-500/5 transition-colors', className)}>{children}</tr>
 }
 
 export function TableHeader({ children, className }) {
@@ -27,4 +27,3 @@ export function TableHeader({ children, className }) {
 export function TableCell({ children, className = '' }) {
   return <td className={cn('px-4 py-3.5 align-middle', className)}>{children}</td>
 }
-

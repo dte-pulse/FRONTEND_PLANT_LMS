@@ -223,7 +223,7 @@ export default function UsersPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-xl bg-indigo-600/20 p-3 text-indigo-300 border border-indigo-500/30">
+              <div className="rounded-xl bg-emerald-600/20 p-3 text-emerald-300 border border-emerald-500/30">
                 <UserPlus className="h-6 w-6" />
               </div>
               <div>

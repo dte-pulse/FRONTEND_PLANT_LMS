@@ -40,7 +40,7 @@ export default function TraineeDashboardPage() {
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="relative">
         <div className="h-12 w-12 rounded-full border-4 border-slate-800 border-t-indigo-500 animate-spin" />
-        <Sparkles className="h-5 w-5 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <Sparkles className="h-5 w-5 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
       </div>
     </div>
   )
@@ -51,17 +51,17 @@ export default function TraineeDashboardPage() {
     <div className="space-y-8 pb-8 max-w-7xl mx-auto">
       {/* Hero Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0F1420] via-indigo-950/60 to-[#0F1420] p-6 md:p-8 text-white border border-slate-800 shadow-xl">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute right-40 -top-10 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold backdrop-blur-md">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
               <span>Plant Learning Portal</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-              Welcome back, <span className="bg-gradient-to-r from-indigo-200 via-white to-indigo-300 bg-clip-text text-transparent">{firstName}</span> 👋
+              Welcome back, <span className="bg-gradient-to-r from-emerald-200 via-white to-emerald-300 bg-clip-text text-transparent">{firstName}</span> 👋
             </h1>
             <p className="text-xs text-slate-300 leading-relaxed">
               {inProgress.length > 0
@@ -73,14 +73,14 @@ export default function TraineeDashboardPage() {
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button
               onClick={() => navigate('/trainee/assessments')}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-lg shadow-indigo-600/25 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-lg shadow-indigo-600/25 hover:scale-[1.02] active:scale-[0.98]"
             >
               <BookOpen className="h-4 w-4" />
               View SOPs
             </button>
             <button
               onClick={() => navigate('/trainee/qa')}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-[#161C2C] hover:bg-slate-800 text-white text-xs font-semibold border border-slate-700 backdrop-blur-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-[#161C2C] hover:bg-slate-800 text-white text-xs font-semibold border border-slate-700 backdrop-blur-md transition-[color,background-color,border-color,box-shadow,transform,opacity] hover:scale-[1.02] active:scale-[0.98]"
             >
               <Zap className="h-4 w-4 text-amber-400" />
               AI Assistant
@@ -92,12 +92,12 @@ export default function TraineeDashboardPage() {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Assigned SOPs', value: s.total_assignments ?? 0, icon: BookOpen, bg: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' },
+          { label: 'Assigned SOPs', value: s.total_assignments ?? 0, icon: BookOpen, bg: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
           { label: 'Completed', value: s.completed ?? 0, icon: CheckCircle2, bg: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
           { label: 'Weak Topics', value: s.weak_topics ?? 0, icon: Target, bg: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
           { label: 'Avg Pass Rate', value: `${s.avg_completion_pct ?? 0}%`, icon: BarChart3, bg: 'bg-purple-500/10 text-purple-400 border border-purple-500/20' },
         ].map(({ label, value, icon: Icon, bg }) => (
-          <div key={label} className="group relative rounded-2xl border border-slate-800 bg-[#161C2C] p-5 shadow-md hover:border-slate-700 transition-all duration-300">
+          <div key={label} className="group relative rounded-2xl border border-slate-800 bg-[#161C2C] p-5 shadow-md hover:border-slate-700 transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-slate-400">{label}</span>
               <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center transition-transform group-hover:scale-110`}>
@@ -120,7 +120,7 @@ export default function TraineeDashboardPage() {
             <div className="rounded-3xl border border-slate-800 bg-[#161C2C] shadow-md overflow-hidden">
               <div className="p-5 border-b border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                     <Route className="h-4 w-4" />
                   </div>
                   <div>
@@ -130,7 +130,7 @@ export default function TraineeDashboardPage() {
                 </div>
                 <button
                   onClick={() => navigate('/trainee/paths')}
-                  className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-500/10"
+                  className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-emerald-500/10"
                 >
                   View all <ArrowRight className="h-3.5 w-3.5" />
                 </button>
@@ -143,20 +143,20 @@ export default function TraineeDashboardPage() {
                     <div
                       key={path.id}
                       onClick={() => navigate('/trainee/paths')}
-                      className="group p-4 rounded-2xl border border-slate-800 bg-[#0F1420] hover:bg-[#1A2234] hover:border-indigo-500/40 hover:shadow-md transition-all duration-300 cursor-pointer"
+                      className="group p-4 rounded-2xl border border-slate-800 bg-[#0F1420] hover:bg-[#1A2234] hover:border-emerald-500/40 hover:shadow-md transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300 cursor-pointer"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
+                          <span className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                             {path.name || path.title}
                           </span>
                         </div>
-                        <span className="text-xs font-mono text-indigo-400 font-bold">{progress}%</span>
+                        <span className="text-xs font-mono text-emerald-400 font-bold">{progress}%</span>
                       </div>
                       <Progress value={progress} className="h-2 bg-slate-800" />
                       <div className="flex items-center justify-between mt-3 text-[11px] text-slate-400 font-medium">
                         <span>{path.completed_modules || 0} of {path.total_modules || 0} modules completed</span>
-                        <span className="text-indigo-400 font-semibold flex items-center gap-1">
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1">
                           Continue <ArrowRight className="h-3 w-3" />
                         </span>
                       </div>
@@ -192,11 +192,11 @@ export default function TraineeDashboardPage() {
                 inProgress.map((item) => (
                   <div
                     key={item.document_id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-800 bg-[#0F1420] hover:border-slate-700 transition-all shadow-xs"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-800 bg-[#0F1420] hover:border-slate-700 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
                   >
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
                           {item.document_code}
                         </span>
                         <h4 className="text-xs font-bold text-white truncate">{item.document_title}</h4>
@@ -211,7 +211,7 @@ export default function TraineeDashboardPage() {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => navigate(`/trainee/learn/${item.document_id}`)}
-                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm shrink-0"
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-sm shrink-0"
                       >
                         <Play className="h-3.5 w-3.5 fill-current" /> Resume
                       </button>
@@ -250,7 +250,7 @@ export default function TraineeDashboardPage() {
                 </div>
               ) : (
                 weakAreas.slice(0, 3).map((w, i) => (
-                  <div key={i} className="p-3.5 rounded-2xl border border-slate-800 bg-[#0F1420] hover:border-amber-500/30 transition-all">
+                  <div key={i} className="p-3.5 rounded-2xl border border-slate-800 bg-[#0F1420] hover:border-amber-500/30 transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-xs font-semibold text-white truncate">
                         {w.topic_title || `Topic #${w.topic_id}`}
@@ -265,7 +265,7 @@ export default function TraineeDashboardPage() {
                       <span>Score: <strong className="text-white font-mono">{w.score?.toFixed(1)}%</strong> ({w.attempt_count} attempts)</span>
                       <button
                         onClick={() => navigate(`/trainee/learn/${w.document_id}`)}
-                        className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors"
+                        className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 transition-colors"
                       >
                         Revisit <ChevronRight className="h-3 w-3" />
                       </button>
@@ -292,18 +292,18 @@ export default function TraineeDashboardPage() {
                 <button
                   key={link.label}
                   onClick={() => navigate(link.path)}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-800/50 transition-all text-left group"
+                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-800/50 transition-[color,background-color,border-color,box-shadow,transform,opacity] text-left group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center transition-colors">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center transition-colors">
                       <link.icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-white group-hover:text-indigo-300 transition-colors">{link.label}</p>
+                      <p className="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors">{link.label}</p>
                       <p className="text-[10px] text-slate-400">{link.desc}</p>
                     </div>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className="h-4 w-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-[color,background-color,border-color,box-shadow,transform,opacity]" />
                 </button>
               ))}
             </div>

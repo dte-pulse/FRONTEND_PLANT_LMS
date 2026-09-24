@@ -369,12 +369,12 @@ export default function DocumentsPage() {
                           <TableRow 
                             key={doc.id} 
                             onClick={() => setSelectedDoc(doc)}
-                            className={`cursor-pointer transition-colors ${selectedDoc?.id === doc.id ? 'bg-indigo-500/10' : 'hover:bg-white/5'}`}
+                            className={`cursor-pointer transition-colors ${selectedDoc?.id === doc.id ? 'bg-emerald-500/10' : 'hover:bg-white/5'}`}
                           >
                             <TableCell className="font-semibold text-white">{doc.code} (v{doc.version})</TableCell>
                             <TableCell className="text-slate-200 max-w-[150px] truncate">{doc.title}</TableCell>
                             <TableCell className="text-slate-400">{doc.topic}</TableCell>
-                            <TableCell className="text-xs font-mono text-indigo-300">{doc.qa_scope}</TableCell>
+                            <TableCell className="text-xs font-mono text-emerald-300">{doc.qa_scope}</TableCell>
                             <TableCell>{getStatusBadge(doc.status)}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-1">
@@ -401,7 +401,7 @@ export default function DocumentsPage() {
                                 <Button 
                                   size="icon" 
                                   variant="ghost" 
-                                  className="h-8 w-8 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10"
+                                  className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
                                   title="Upload new version"
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -459,7 +459,7 @@ export default function DocumentsPage() {
         <Card className="min-h-[500px]">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-white flex items-center gap-2">
-              <FileText className="h-5 w-5 text-indigo-400" />
+              <FileText className="h-5 w-5 text-emerald-400" />
               {selectedDoc ? `Extracted Content: ${selectedDoc.code}` : 'Extracted Content'}
             </CardTitle>
             <CardDescription className="text-slate-400">
@@ -504,7 +504,7 @@ export default function DocumentsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/10 gap-1.5"
+                      className="text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/10 gap-1.5"
                       onClick={() => {
                         setCode(selectedDoc.code)
                         setTitle(selectedDoc.title)
@@ -553,7 +553,7 @@ export default function DocumentsPage() {
                               <p className="text-xs text-slate-400 capitalize">{item.status}</p>
                             </div>
                             {item.id === selectedDoc.id && (
-                              <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-full border border-indigo-500/30">CURRENT</span>
+                              <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/30">CURRENT</span>
                             )}
                           </div>
                         ))
@@ -667,7 +667,7 @@ export default function DocumentsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
             <div className="mb-6 flex items-center gap-3">
-              <div className="rounded-xl bg-indigo-600/20 p-3 text-indigo-300 border border-indigo-500/30">
+              <div className="rounded-xl bg-emerald-600/20 p-3 text-emerald-300 border border-emerald-500/30">
                 <Upload className="h-6 w-6" />
               </div>
               <div>
@@ -774,7 +774,7 @@ export default function DocumentsPage() {
                   type="file"
                   accept=".pdf,.docx"
                   onChange={(e) => setFile(e.target.files[0])}
-                  className="w-full text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20 cursor-pointer"
+                  className="w-full text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500/10 file:text-emerald-300 hover:file:bg-emerald-500/20 cursor-pointer"
                   required
                 />
               </div>
@@ -859,7 +859,7 @@ export default function DocumentsPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/10 gap-1.5"
+                  className="text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/10 gap-1.5"
                   onClick={() => {
                     setIsPreviewOpen(false);
                     setCode(previewDoc.code);
@@ -903,12 +903,12 @@ export default function DocumentsPage() {
                         <div 
                           key={ver.id}
                           onClick={() => handlePreviewVersionChange(ver.id)}
-                          className={`rounded-2xl border p-3.5 text-left cursor-pointer transition-all ${isCurrentPreview ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'}`}
+                          className={`rounded-2xl border p-3.5 text-left cursor-pointer transition-[color,background-color,border-color,box-shadow,transform,opacity] ${isCurrentPreview ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'}`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
                             <span className="text-xs font-bold text-white">Version {ver.version}</span>
                             <div className="flex gap-1.5">
-                              {isCurrentDoc && <span className="text-[9px] font-bold text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded-full border border-indigo-500/20">Active</span>}
+                              {isCurrentDoc && <span className="text-[9px] font-bold text-emerald-300 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">Active</span>}
                               {ver.status === 'archived' && <span className="text-[9px] font-bold text-slate-400 bg-slate-500/10 px-1.5 py-0.5 rounded-full">Archived</span>}
                             </div>
                           </div>

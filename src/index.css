@@ -1,27 +1,173 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
+/* Single source of truth for app typography: Times New Roman everywhere (system serif, no webfont needed). */
+@theme {
+  --font-sans: 'Times New Roman', Times, serif;
+  --font-mono: 'Times New Roman', Times, serif;
+}
+
 :root {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Times New Roman', Times, serif;
+  color-scheme: light;
+  --pulse-ink: #10251f;
+  --pulse-muted: #63756e;
+  --pulse-canvas: #f3f7f3;
+  --pulse-surface: #ffffff;
+  --pulse-line: #dce7df;
+  --pulse-brand: #0d7658;
+  --pulse-brand-strong: #095d45;
+  --pulse-ring: rgba(13, 118, 88, 0.42);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 html, body, #root {
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: rgba(13, 118, 88, 0.16);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f8fafc;
-  color: #1e293b;
+  background: var(--pulse-canvas);
+  color: var(--pulse-ink);
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
 }
 
-button, input, select {
+button, input, select, textarea {
   font: inherit;
+}
+
+button, [role='button'] {
+  touch-action: manipulation;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--pulse-ring) !important;
+  outline-offset: 2px;
+}
+
+button.transition-all, a.transition-all, [role='button'].transition-all {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity !important;
+  transition-duration: 180ms !important;
+  transition-timing-function: var(--ease-out) !important;
+}
+
+button:not(:disabled):active, [role='button']:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  left: 1rem;
+  top: 1rem;
+  transform: translateY(-180%);
+  border-radius: 0.75rem;
+  background: var(--pulse-brand-strong);
+  color: white;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 180ms var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.text-balance { text-wrap: balance; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* Horizontal scrollers without visible scrollbars (top nav overflow). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* SVG mind-map controls: state change is communicated without delaying navigation. */
+.mind-map-expander {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 180ms var(--ease-out), filter 180ms ease;
+}
+
+.mind-map-expander:hover { filter: brightness(1.18); }
+.mind-map-expander:focus { outline: none; }
+.mind-map-expander:focus-visible { filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.85)); }
+.mind-map-expander.is-expanded { transform: rotate(180deg); }
+
+.mind-map-child {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: mind-map-child-enter 180ms var(--ease-out) both;
+}
+
+@keyframes mind-map-child-enter {
+  from { opacity: 0; transform: translateX(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ── Mind-map modal theme tokens ───────────────────────────────────────────
+   All SVG paints in MindMapModal reference these custom properties, so the
+   modal follows the light/dark toggle without hardcoded hex attributes
+   (which CSS class-shims cannot reach). */
+:root {
+  --mm-font: 'Times New Roman', Times, serif;
+  --mm-line: #cbd5e1;
+  --mm-line-active: #6366f1;
+  --mm-node-fill: #f1f5f9;
+  --mm-node-stroke: #94a3b8;
+  --mm-node-text: #334155;
+  --mm-node-active-fill: #e0e7ff;
+  --mm-node-active-stroke: #6366f1;
+  --mm-node-active-text: #3730a3;
+  --mm-child-fill: #ecfdf5;
+  --mm-child-stroke: #10b981;
+  --mm-child-dot: #10b981;
+  --mm-child-text: #065f46;
+  --mm-chip-fill: #ffffff;
+  --mm-chip-stroke: #94a3b8;
+  --mm-chip-text: #475569;
+  --mm-chip-text-active: #4f46e5;
+  --mm-expander-stroke-active: #6366f1;
+  --mm-hint-text: #6366f1;
+  --mm-tooltip-fill: #1e293b;
+  --mm-tooltip-text: #f1f5f9;
+}
+
+html.dark {
+  --mm-line: #334155;
+  --mm-line-active: #6366f1;
+  --mm-node-fill: #1e293b;
+  --mm-node-stroke: #475569;
+  --mm-node-text: #cbd5e1;
+  --mm-node-active-fill: #1e1b4b;
+  --mm-node-active-stroke: #6366f1;
+  --mm-node-active-text: #a5b4fc;
+  --mm-child-fill: #0d2a1e;
+  --mm-child-stroke: #10b981;
+  --mm-child-dot: #34d399;
+  --mm-child-text: #6ee7b7;
+  --mm-chip-fill: #1e293b;
+  --mm-chip-stroke: #475569;
+  --mm-chip-text: #94a3b8;
+  --mm-chip-text-active: #818cf8;
+  --mm-expander-stroke-active: #6366f1;
+  --mm-hint-text: #818cf8;
+  --mm-tooltip-fill: #1e293b;
+  --mm-tooltip-text: #f1f5f9;
 }
 
 ::-webkit-scrollbar {
@@ -56,6 +202,15 @@ button, input, select {
 }
 
 html.dark {
+  color-scheme: dark;
+  --pulse-ink: #edf6f0;
+  --pulse-muted: #93a79e;
+  --pulse-canvas: #091512;
+  --pulse-surface: #10211c;
+  --pulse-line: #203a31;
+  --pulse-brand: #24a77c;
+  --pulse-brand-strong: #14815f;
+  --pulse-ring: rgba(73, 209, 160, 0.5);
   --theme-bg-0b0f17: #0b0f17;
   --theme-bg-131825: #131825;
   --theme-bg-161c2c: #161c2c;
@@ -147,6 +302,14 @@ html:not(.dark) .text-cyan-400 { color: #0891b2 !important; }
 html:not(.dark) .text-amber-400 { color: #d97706 !important; }
 html:not(.dark) .text-rose-400 { color: #e11d48 !important; }
 html:not(.dark) .text-emerald-400 { color: #059669 !important; }
+/* Pale emerald text colors are designed for dark surfaces; on light emerald
+   tints (e.g. user question bubbles) they must switch to dark green ink. */
+html:not(.dark) .text-emerald-100 { color: #064e3b !important; }
+html:not(.dark) .text-emerald-200 { color: #065f46 !important; }
+html:not(.dark) .text-emerald-200\/90 { color: rgba(6, 95, 70, 0.9) !important; }
+html:not(.dark) .text-emerald-300\/70 { color: rgba(4, 120, 87, 0.78) !important; }
+html:not(.dark) .text-emerald-300\/80 { color: rgba(4, 120, 87, 0.82) !important; }
+html:not(.dark) .text-emerald-300 { color: #047857 !important; }
 html:not(.dark) .text-purple-400 { color: #7c3aed !important; }
 
 /* Conditional white text override (keeps white text inside solid colored badges/buttons) */
@@ -239,3 +402,28 @@ html:not(.dark) .shadow-2xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 
 html:not(.dark) .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important; }
 html:not(.dark) .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
 html:not(.dark) .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important; }
+
+html.dark body {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(30, 138, 99, 0.16), transparent 31rem),
+    radial-gradient(circle at 100% 0%, rgba(36, 116, 109, 0.1), transparent 27rem),
+    var(--pulse-canvas);
+}
+
+html:not(.dark) body {
+  background:
+    radial-gradient(circle at 0% -15%, rgba(177, 226, 198, 0.4), transparent 32rem),
+    var(--pulse-canvas);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .mind-map-child { animation: none; }
+  .mind-map-expander { transition: none; }
+}

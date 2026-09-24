@@ -239,11 +239,11 @@ export default function TrainingPage() {
           <p className="text-slate-400 text-sm">Manage induction, OJT, SOP, cGMP, external, need-based, and contractual workflows.</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={fetchData} className="p-2 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-all">
+          <button onClick={fetchData} className="p-2 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity]">
             <RefreshCw className="h-4 w-4" />
           </button>
           <button onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-xs">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs">
             <UserPlus className="h-4 w-4" /> Start Workflow
           </button>
         </div>
@@ -251,7 +251,7 @@ export default function TrainingPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Assignments', value: stats.total, icon: Layers, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+          { label: 'Total Assignments', value: stats.total, icon: Layers, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
           { label: 'Completed', value: stats.completed, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
           { label: 'Pending', value: stats.pending, icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/10' },
           { label: 'Pending Verification', value: stats.pending_verification, icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-400/10' },
@@ -266,8 +266,8 @@ export default function TrainingPage() {
       <div className="flex gap-2 flex-wrap">
         {['all', ...TRAINING_TYPES.map(t => t.value)].map(type => (
           <button key={type} onClick={() => setFilter(type)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all capitalize ${
-              filter === type ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:bg-slate-800'
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] capitalize ${
+              filter === type ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:bg-slate-800'
             }`}>
             {type === 'all' ? 'All Types' : TRAINING_TYPES.find(t => t.value === type)?.label}
           </button>
@@ -456,11 +456,11 @@ export default function TrainingPage() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-all">
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                   Cancel
                 </button>
                 <button type="submit" disabled={submitting}
-                  className="flex-1 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-all">
+                  className="flex-1 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                   {submitting ? <div className="h-4 w-4 rounded-full border-2 border-slate-950 border-t-transparent animate-spin" /> : <Send className="h-4 w-4" />}
                   {submitting ? 'Submitting…' : 'Submit'}
                 </button>

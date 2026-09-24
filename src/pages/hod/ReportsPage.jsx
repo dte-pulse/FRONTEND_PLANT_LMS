@@ -58,7 +58,7 @@ export default function HodReportsPage() {
             {departmentName ? `${departmentName} training compliance, overdue assignments, and NQ tracking` : 'Department training compliance, overdue assignments, and NQ tracking'}
           </p>
         </div>
-        <button onClick={fetchAll} className="p-2 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-all">
+        <button onClick={fetchAll} className="p-2 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity]">
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
@@ -68,7 +68,7 @@ export default function HodReportsPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Global Readiness', value: `${readiness.readiness_score}%`, icon: BarChart3, color: scoreColor(readiness.readiness_score), bg: scoreBg(readiness.readiness_score) },
-            { label: 'Total Assignments', value: readiness.total_assignments, icon: FileText, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+            { label: 'Total Assignments', value: readiness.total_assignments, icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
             { label: 'Completed', value: readiness.completed, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
             { label: 'Overdue', value: readiness.overdue ?? overdue.length, icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-400/10' },
           ].map(({ label, value, icon: Icon, color, bg }) => (
@@ -88,8 +88,8 @@ export default function HodReportsPage() {
           { key: 'nq', label: `NQ Employees (${nqList.length})` },
         ].map(({ key, label }) => (
           <button key={key} onClick={() => setActiveTab(key)}
-            className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all ${
-              activeTab === key ? 'text-indigo-400 border-b-2 border-indigo-500 -mb-px' : 'text-slate-400 hover:text-white'
+            className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
+              activeTab === key ? 'text-emerald-400 border-b-2 border-emerald-500 -mb-px' : 'text-slate-400 hover:text-white'
             }`}>
             {label}
           </button>
@@ -120,7 +120,7 @@ export default function HodReportsPage() {
                 </div>
               </div>
               <div className="w-full bg-slate-800 rounded-full h-2">
-                <div className={`h-2 rounded-full transition-all ${
+                <div className={`h-2 rounded-full transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
                   dept.compliance_score >= 90 ? 'bg-emerald-400' : dept.compliance_score >= 70 ? 'bg-amber-400' : 'bg-red-400'
                 }`} style={{ width: `${dept.compliance_score}%` }} />
               </div>

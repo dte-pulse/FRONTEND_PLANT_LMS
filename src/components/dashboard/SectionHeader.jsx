@@ -1,8 +1,8 @@
 export function SectionHeader({ eyebrow, title, description }) {
   return (
     <div>
-      <p className='text-xs text-indigo-500 font-medium'>{eyebrow}</p>
-      <h3 className='mt-1.5 text-lg font-semibold text-slate-900'>{title}</h3>
+      {eyebrow && <p className='text-xs text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide'>{eyebrow}</p>}
+      <h3 className={`${eyebrow ? 'mt-1.5' : ''} text-lg font-semibold text-slate-900 dark:text-white text-balance`}>{title}</h3>
       {description ? <p className='mt-1.5 max-w-2xl text-sm leading-6 text-slate-500'>{description}</p> : null}
     </div>
   )

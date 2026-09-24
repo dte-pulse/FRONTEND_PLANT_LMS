@@ -138,7 +138,7 @@ export default function CalendarPage() {
             <div className="flex flex-col items-center justify-center text-slate-500 py-20">
               <CalendarDays className="h-16 w-16 mb-4 stroke-[1]" />
               <p>No upcoming events in the calendar.</p>
-              <button onClick={() => setShowModal(true)} className="mt-3 text-xs font-bold text-indigo-400 hover:text-indigo-300">
+              <button onClick={() => setShowModal(true)} className="mt-3 text-xs font-bold text-emerald-400 hover:text-emerald-300">
                 + Schedule your first session
               </button>
             </div>
@@ -269,7 +269,7 @@ export default function CalendarPage() {
           <div className="bg-slate-900 border border-white/10 rounded-3xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-indigo-600/20 p-3 text-indigo-300 border border-indigo-500/30">
+                <div className="rounded-xl bg-emerald-600/20 p-3 text-emerald-300 border border-emerald-500/30">
                   <CalendarDays className="h-6 w-6" />
                 </div>
                 <div>
@@ -367,11 +367,11 @@ export default function CalendarPage() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-all">
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity]">
                   Cancel
                 </button>
                 <button type="submit" disabled={submitting}
-                  className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-50 transition-all shadow-xs">
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-50 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs">
                   {submitting ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Plus className="h-4 w-4" />}
                   {submitting ? 'Scheduling…' : 'Schedule Session'}
                 </button>

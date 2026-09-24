@@ -227,7 +227,7 @@ export default function TrainingPathsPage() {
     <div className='space-y-6'>
       {/* Hero */}
       <div className='rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-400/10 to-slate-900/0 p-6'>
-        <p className='text-xs uppercase tracking-[0.2em] text-indigo-500'>Curriculum management</p>
+        <p className='text-xs uppercase tracking-[0.2em] text-emerald-500'>Curriculum management</p>
         <h2 className='mt-2 text-2xl font-semibold tracking-tight text-white'>
           Training Paths
         </h2>
@@ -244,7 +244,7 @@ export default function TrainingPathsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder='Search paths...'
-            className='w-full rounded-xl border border-slate-800 bg-slate-900/90 pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500'
+            className='w-full rounded-xl border border-slate-800 bg-slate-900/90 pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500'
           />
         </div>
         <div className='flex items-center gap-3'>
@@ -252,8 +252,8 @@ export default function TrainingPathsPage() {
           <div className='flex items-center gap-1.5 rounded-xl border border-slate-800 bg-[#131825] p-1'>
             {['all', ...PATH_STATUSES].map(s => (
               <button key={s} onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  statusFilter === s ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer ${
+                  statusFilter === s ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
                 }`}
               >{s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}</button>
             ))}
@@ -261,14 +261,14 @@ export default function TrainingPathsPage() {
           {/* View toggle */}
           <div className='flex rounded-xl border border-slate-800 bg-[#131825] p-1'>
             <button onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-all cursor-pointer ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer ${viewMode === 'grid' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}
             ><Grid3X3 className='h-4 w-4' /></button>
             <button onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg transition-all cursor-pointer ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer ${viewMode === 'list' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}
             ><List className='h-4 w-4' /></button>
           </div>
           <button onClick={() => { setForm({ name: '', description: '', level: 'Beginner', duration_days: 30, status: 'draft' }); setShowCreateModal(true) }}
-            className='flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-5 py-2.5 text-sm transition-all cursor-pointer'
+            className='flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
           ><Plus className='h-4 w-4' /> New Path</button>
         </div>
       </div>
@@ -284,13 +284,13 @@ export default function TrainingPathsPage() {
           <p className='text-lg font-medium text-slate-400'>No training paths found</p>
           <p className='text-sm'>{search ? 'Try a different search' : 'Create your first training path to get started'}</p>
           {!search && <button onClick={() => setShowCreateModal(true)}
-            className='mt-2 flex items-center gap-2 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 px-5 py-2.5 text-sm font-medium hover:bg-indigo-100 transition-all cursor-pointer'
+            className='mt-2 flex items-center gap-2 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 px-5 py-2.5 text-sm font-medium hover:bg-indigo-100 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
           ><Plus className='h-4 w-4' /> Create Path</button>}
         </div>
       ) : viewMode === 'grid' ? (
         <div className='grid gap-5 md:grid-cols-2 xl:grid-cols-3'>
           {filtered.map(path => (
-            <Card key={path.id} className='group relative overflow-hidden transition-all duration-300 hover:border-cyan-400/30 hover:shadow-lg hover:shadow-cyan-950/10 cursor-pointer'
+            <Card key={path.id} className='group relative overflow-hidden transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300 hover:border-cyan-400/30 hover:shadow-lg hover:shadow-cyan-950/10 cursor-pointer'
               onClick={() => openDetail(path)}
             >
               <div className='absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-cyan-400/5 to-transparent rounded-bl-full' />
@@ -320,10 +320,10 @@ export default function TrainingPathsPage() {
                 {/* Hover actions */}
                 <div className='absolute top-3 right-12 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1'>
                   <button onClick={e => { e.stopPropagation(); openEdit(path) }}
-                    className='p-1.5 rounded-lg bg-slate-800/80 text-slate-300 hover:text-cyan-200 hover:bg-slate-700/80 transition-all cursor-pointer'
+                    className='p-1.5 rounded-lg bg-slate-800/80 text-slate-300 hover:text-cyan-200 hover:bg-slate-700/80 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
                   ><Edit3 className='h-3.5 w-3.5' /></button>
                   <button onClick={e => { e.stopPropagation(); handleDelete(path.id) }}
-                    className='p-1.5 rounded-lg bg-slate-800/80 text-slate-300 hover:text-rose-300 hover:bg-slate-700/80 transition-all cursor-pointer'
+                    className='p-1.5 rounded-lg bg-slate-800/80 text-slate-300 hover:text-rose-300 hover:bg-slate-700/80 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
                   ><Trash2 className='h-3.5 w-3.5' /></button>
                 </div>
               </CardContent>
@@ -365,10 +365,10 @@ export default function TrainingPathsPage() {
                     <td className='p-4 text-right'>
                       <div className='flex items-center justify-end gap-1'>
                         <button onClick={e => { e.stopPropagation(); openEdit(path) }}
-                          className='p-2 rounded-lg text-slate-400 hover:text-cyan-200 hover:bg-white/5 transition-all cursor-pointer'
+                          className='p-2 rounded-lg text-slate-400 hover:text-cyan-200 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
                         ><Edit3 className='h-4 w-4' /></button>
                         <button onClick={e => { e.stopPropagation(); handleDelete(path.id) }}
-                          className='p-2 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-white/5 transition-all cursor-pointer'
+                          className='p-2 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'
                         ><Trash2 className='h-4 w-4' /></button>
                       </div>
                     </td>
@@ -386,7 +386,7 @@ export default function TrainingPathsPage() {
           <div className='w-full max-w-lg rounded-[28px] border border-white/10 bg-slate-950 p-6 shadow-2xl backdrop-blur-xl' onClick={e => e.stopPropagation()}>
             <div className='flex items-center justify-between mb-6'>
               <h3 className='text-xl font-semibold text-white'>Create Training Path</h3>
-              <button onClick={() => setShowCreateModal(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer'><X className='h-5 w-5' /></button>
+              <button onClick={() => setShowCreateModal(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'><X className='h-5 w-5' /></button>
             </div>
             <div className='space-y-4'>
               <div>
@@ -418,9 +418,9 @@ export default function TrainingPathsPage() {
               </div>
               <div className='flex gap-3 pt-2'>
                 <button onClick={() => setShowCreateModal(false)}
-                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-all cursor-pointer'>Cancel</button>
+                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>Cancel</button>
                 <button onClick={handleCreate} disabled={saving || !form.name.trim()}
-                  className='flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 text-sm transition-all disabled:opacity-50 cursor-pointer'>
+                  className='flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50 cursor-pointer'>
                   {saving ? 'Creating...' : 'Create Path'}
                 </button>
               </div>
@@ -435,7 +435,7 @@ export default function TrainingPathsPage() {
           <div className='w-full max-w-lg rounded-[28px] border border-white/10 bg-slate-950 p-6 shadow-2xl backdrop-blur-xl' onClick={e => e.stopPropagation()}>
             <div className='flex items-center justify-between mb-6'>
               <h3 className='text-xl font-semibold text-white'>Edit Path</h3>
-              <button onClick={() => setShowEditModal(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer'><X className='h-5 w-5' /></button>
+              <button onClick={() => setShowEditModal(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'><X className='h-5 w-5' /></button>
             </div>
             <div className='space-y-4'>
               <div>
@@ -471,9 +471,9 @@ export default function TrainingPathsPage() {
               </div>
               <div className='flex gap-3 pt-2'>
                 <button onClick={() => setShowEditModal(false)}
-                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-all cursor-pointer'>Cancel</button>
+                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>Cancel</button>
                 <button onClick={handleUpdate} disabled={saving || !form.name.trim()}
-                  className='flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 text-sm transition-all disabled:opacity-50 cursor-pointer'>
+                  className='flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50 cursor-pointer'>
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
@@ -490,16 +490,16 @@ export default function TrainingPathsPage() {
             <div className='sticky top-0 z-10 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl p-6'>
               <div className='flex items-center justify-between mb-2'>
                 <button onClick={() => setShowDetailPanel(false)}
-                  className='flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-all cursor-pointer'>
+                  className='flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                   <ChevronLeft className='h-4 w-4' /> Back to paths
                 </button>
                 <div className='flex gap-2'>
                   <button onClick={() => openEdit(selectedPath)}
-                    className='flex items-center gap-1.5 rounded-xl border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/5 transition-all cursor-pointer'>
+                    className='flex items-center gap-1.5 rounded-xl border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                     <Edit3 className='h-3.5 w-3.5' /> Edit
                   </button>
                   <button onClick={() => handleDelete(selectedPath.id)}
-                    className='flex items-center gap-1.5 rounded-xl border border-white/10 px-3 py-1.5 text-xs font-medium text-rose-300 hover:bg-rose-500/10 transition-all cursor-pointer'>
+                    className='flex items-center gap-1.5 rounded-xl border border-white/10 px-3 py-1.5 text-xs font-medium text-rose-300 hover:bg-rose-500/10 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                     <Trash2 className='h-3.5 w-3.5' /> Delete
                   </button>
                 </div>
@@ -519,7 +519,7 @@ export default function TrainingPathsPage() {
               {/* Stats */}
               <div className='grid grid-cols-3 gap-4'>
                 <div className='rounded-2xl border border-white/10 bg-slate-900/30 p-4 text-center'>
-                  <Layers className='h-5 w-5 text-indigo-400 mx-auto mb-1.5' />
+                  <Layers className='h-5 w-5 text-emerald-400 mx-auto mb-1.5' />
                   <p className='text-2xl font-semibold text-white'>{modules.length}</p>
                   <p className='text-xs text-slate-400'>Modules</p>
                 </div>
@@ -540,7 +540,7 @@ export default function TrainingPathsPage() {
                 <div className='flex items-center justify-between mb-4'>
                   <SectionHeader eyebrow='Curriculum' title='Modules' description='Learning modules in this path, in order.' />
                   <button onClick={() => { setShowAddModule(true); setModuleForm({ title: '', description: '', order_index: 0 }) }}
-                    className='flex items-center gap-1.5 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 px-4 py-2 text-xs font-medium hover:bg-indigo-100 transition-all cursor-pointer'>
+                    className='flex items-center gap-1.5 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 px-4 py-2 text-xs font-medium hover:bg-indigo-100 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                     <Plus className='h-3.5 w-3.5' /> Add Module
                   </button>
                 </div>
@@ -553,16 +553,16 @@ export default function TrainingPathsPage() {
                 ) : (
                   <div className='space-y-3'>
                     {modules.map((mod, idx) => (
-                      <div key={mod.id} className='rounded-2xl border border-white/10 bg-slate-900/30 p-4 hover:border-cyan-400/20 transition-all'>
+                      <div key={mod.id} className='rounded-2xl border border-white/10 bg-slate-900/30 p-4 hover:border-cyan-400/20 transition-[color,background-color,border-color,box-shadow,transform,opacity]'>
                         <div className='flex items-start gap-3'>
                           <div className='flex flex-col items-center gap-0.5 pt-1'>
                             <button onClick={() => reorderModule(idx, -1)} disabled={idx === 0}
-                              className='p-0.5 rounded text-slate-500 hover:text-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer'>
+                              className='p-0.5 rounded text-slate-500 hover:text-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                               <ArrowUp className='h-3 w-3' />
                             </button>
                             <span className='text-[10px] font-mono text-slate-500 w-4 text-center'>{idx + 1}</span>
                             <button onClick={() => reorderModule(idx, 1)} disabled={idx === modules.length - 1}
-                              className='p-0.5 rounded text-slate-500 hover:text-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer'>
+                              className='p-0.5 rounded text-slate-500 hover:text-cyan-200 disabled:opacity-20 disabled:cursor-not-allowed transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                               <ArrowDown className='h-3 w-3' />
                             </button>
                           </div>
@@ -570,7 +570,7 @@ export default function TrainingPathsPage() {
                             <div className='flex items-center justify-between gap-3'>
                               <h4 className='font-medium text-white text-sm'>{mod.title}</h4>
                               <button onClick={() => deleteModule(mod.id)}
-                                className='p-1.5 rounded-lg text-slate-500 hover:text-rose-300 hover:bg-rose-500/10 transition-all cursor-pointer'>
+                                className='p-1.5 rounded-lg text-slate-500 hover:text-rose-300 hover:bg-rose-500/10 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                                 <X className='h-3.5 w-3.5' />
                               </button>
                             </div>
@@ -585,7 +585,7 @@ export default function TrainingPathsPage() {
                                     {doc.title}
                                   </span>
                                   <button onClick={() => removeDocument(mod.id, doc.id)}
-                                    className='text-slate-500 hover:text-rose-300 transition-all cursor-pointer'>
+                                    className='text-slate-500 hover:text-rose-300 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>
                                     <X className='h-3 w-3' />
                                   </button>
                                 </div>
@@ -635,7 +635,7 @@ export default function TrainingPathsPage() {
           <div className='w-full max-w-md rounded-[28px] border border-white/10 bg-slate-950 p-6 shadow-2xl backdrop-blur-xl' onClick={e => e.stopPropagation()}>
             <div className='flex items-center justify-between mb-6'>
               <h3 className='text-lg font-semibold text-white'>Add Module</h3>
-              <button onClick={() => setShowAddModule(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer'><X className='h-5 w-5' /></button>
+              <button onClick={() => setShowAddModule(false)} className='p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'><X className='h-5 w-5' /></button>
             </div>
             <div className='space-y-4'>
               <div>
@@ -651,9 +651,9 @@ export default function TrainingPathsPage() {
               </div>
               <div className='flex gap-3 pt-2'>
                 <button onClick={() => setShowAddModule(false)}
-                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-all cursor-pointer'>Cancel</button>
+                  className='flex-1 rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 transition-[color,background-color,border-color,box-shadow,transform,opacity] cursor-pointer'>Cancel</button>
                 <button onClick={handleAddModule} disabled={savingModule || !moduleForm.title.trim()}
-                  className='flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 text-sm transition-all disabled:opacity-50 cursor-pointer'>
+                  className='flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 text-sm transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50 cursor-pointer'>
                   {savingModule ? 'Adding...' : 'Add Module'}
                 </button>
               </div>

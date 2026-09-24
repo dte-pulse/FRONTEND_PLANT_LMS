@@ -24,10 +24,16 @@ function normalizeContent(text) {
   return normalized
 }
 
+function extractChapterNumber(title) {
+  if (!title) return '0'
+  const match = title.trim().match(/^(\d+)\./)
+  return match ? match[1] : '0'
+}
+
 function KnowledgeBar({ score, className = '' }) {
   return (
     <div className={`h-1.5 w-full rounded-full bg-slate-800 overflow-hidden ${className}`}>
-      <div className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r from-indigo-500 to-emerald-400`} style={{ width: `${Math.min(score, 100)}%` }} />
+      <div className={`h-full rounded-full transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-700 bg-gradient-to-r from-emerald-500 to-emerald-400`} style={{ width: `${Math.min(score, 100)}%` }} />
     </div>
   )
 }
@@ -35,7 +41,20 @@ function KnowledgeBar({ score, className = '' }) {
 // ─── Derive a human-readable title from raw chunk content ───────────────────
 function getChildTitle(content, fallback) {
   if (!content) return fallback
-  const lines = content.split('\n')
+  let cleanContent = content.trim()
+  if (cleanContent.startsWith('[Preceding Section:')) {
+    const closeBracketIdx = cleanContent.indexOf(']')
+    if (closeBracketIdx !== -1) {
+      cleanContent = cleanContent.slice(closeBracketIdx + 1).trim()
+      if (cleanContent.startsWith('...')) {
+        const firstNewlineIdx = cleanContent.indexOf('\n')
+        if (firstNewlineIdx !== -1) {
+          cleanContent = cleanContent.slice(firstNewlineIdx + 1).trim()
+        }
+      }
+    }
+  }
+  const lines = cleanContent.split('\n')
   for (const line of lines) {
     const clean = line
       .replace(/<[^>]+>/g, '')
@@ -50,322 +69,9 @@ function getChildTitle(content, fallback) {
   return fallback
 }
 
+import MindMapModal from '@/components/shared/MindMapModal'
+
 // ─── SVG-based interactive mind map tree (NotebookLM-style) ─────────────────
-const NODE_W = 180
-const NODE_H = 36
-const CHILD_W = 180
-const CHILD_H = 32
-const COL_GAP = 110   // horizontal gap between columns
-const ROW_GAP = 14    // vertical gap between sibling nodes
-
-function MindMapModal({ open, onClose, docCode, docTitle, parents, currentParentIdx, onJump }) {
-  const [expanded, setExpanded] = useState(() => {
-    const m = {}
-    parents?.forEach((_, i) => { m[i] = true })
-    return m
-  })
-  const [tooltip, setTooltip] = useState(null) // { text, x, y }
-  const containerRef = useRef(null)
-
-  useEffect(() => {
-    if (open && parents) {
-      const m = {}
-      parents.forEach((_, i) => { m[i] = true })
-      setExpanded(m)
-    }
-  }, [open, parents])
-
-  if (!open) return null
-
-  // ── Layout calculation ──────────────────────────────────────────────────
-  const PADDING = 40
-  const ROOT_X = PADDING
-  const ROOT_Y_CENTER = 0 // will offset later
-
-  // For each parent, compute its subtree height
-  const parentLayouts = (parents || []).map((p, pi) => {
-    const isExp = expanded[pi]
-    const childCount = isExp ? (p.children?.length ?? 0) : 0
-    const childrenH = childCount > 0 ? childCount * (CHILD_H + ROW_GAP) - ROW_GAP : 0
-    const height = Math.max(NODE_H, childrenH)
-    return { height, childCount, isExp }
-  })
-
-  // Total height of parent column
-  const totalParentH = parentLayouts.reduce((s, l) => s + l.height + ROW_GAP, -ROW_GAP)
-  const SVG_H = Math.max(totalParentH + PADDING * 2, 300)
-  const SVG_W = PADDING + NODE_W + COL_GAP + CHILD_W + COL_GAP + CHILD_W + PADDING
-
-  // Root node centered
-  const rootX = ROOT_X
-  const rootY = SVG_H / 2 - NODE_H / 2
-
-  // Parent column X
-  const parentX = rootX + NODE_W + COL_GAP
-
-  // Lay out parents top-to-bottom
-  let cursor = (SVG_H - totalParentH) / 2
-  const layouts = parentLayouts.map((l, pi) => {
-    const parentY = cursor + l.height / 2 - NODE_H / 2
-    const childStartY = cursor + l.height / 2 - (l.childCount * (CHILD_H + ROW_GAP) - ROW_GAP) / 2
-
-    const children = (parents[pi].children || []).map((c, ci) => ({
-      x: parentX + NODE_W + COL_GAP,
-      y: childStartY + ci * (CHILD_H + ROW_GAP),
-      title: getChildTitle(c.content, `Sub-topic ${ci + 1}`),
-      id: c.id,
-      ci,
-    }))
-
-    cursor += l.height + ROW_GAP
-    return { parentY, children, pi }
-  })
-
-  const rootCx = rootX + NODE_W
-  const rootCy = rootY + NODE_H / 2
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/90 backdrop-blur-lg p-4">
-      <div
-        ref={containerRef}
-        className="relative w-full max-w-6xl h-[88vh] rounded-3xl border border-slate-800 bg-[#0B0F17] shadow-2xl flex flex-col overflow-hidden"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-800/80 bg-[#0B0F17]/80 backdrop-blur z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-              <span className="text-indigo-300 text-base">🗺</span>
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-white">{docCode} — Document Mind Map</h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Click <span className="text-indigo-300 font-semibold">›</span> to expand sections · Click <span className="text-emerald-300 font-semibold">sub-topic nodes</span> to jump to content
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
-          >
-            <span className="text-sm font-bold">✕</span>
-          </button>
-        </div>
-
-        {/* SVG Canvas */}
-        <div className="flex-1 overflow-auto bg-[#080D18] relative">
-          <svg
-            width={SVG_W}
-            height={SVG_H}
-            className="block min-w-full"
-            style={{ minHeight: SVG_H }}
-          >
-            <defs>
-              <filter id="glow-indigo">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
-              </filter>
-              <filter id="glow-emerald">
-                <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
-              </filter>
-            </defs>
-
-            {/* ── ROOT → PARENT connector lines ── */}
-            {layouts.map(({ parentY, pi }) => {
-              const px = parentX
-              const py = parentY + NODE_H / 2
-              const cx1 = rootCx + (px - rootCx) * 0.5
-              return (
-                <path
-                  key={`root-p-${pi}`}
-                  d={`M ${rootCx} ${rootCy} C ${cx1} ${rootCy}, ${cx1} ${py}, ${px} ${py}`}
-                  fill="none"
-                  stroke={pi === currentParentIdx ? '#6366f1' : '#334155'}
-                  strokeWidth={pi === currentParentIdx ? 2 : 1.5}
-                  strokeDasharray={pi === currentParentIdx ? '' : '5 4'}
-                  opacity={0.7}
-                />
-              )
-            })}
-
-            {/* ── PARENT → CHILD connector lines ── */}
-            {layouts.map(({ parentY, children, pi }) => {
-              if (!expanded[pi] || children.length === 0) return null
-              const pRx = parentX + NODE_W  // right edge of parent node
-              const pCy = parentY + NODE_H / 2
-              return children.map(({ x, y, ci }) => {
-                const cy = y + CHILD_H / 2
-                const cx1 = pRx + (x - pRx) * 0.5
-                return (
-                  <path
-                    key={`p-c-${pi}-${ci}`}
-                    d={`M ${pRx} ${pCy} C ${cx1} ${pCy}, ${cx1} ${cy}, ${x} ${cy}`}
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth={1.5}
-                    opacity={0.35}
-                  />
-                )
-              })
-            })}
-
-            {/* ── ROOT NODE ── */}
-            <g>
-              <rect
-                x={rootX} y={rootY}
-                width={NODE_W} height={NODE_H}
-                rx={18} ry={18}
-                fill="url(#rootGrad)"
-                filter="url(#glow-indigo)"
-              />
-              <defs>
-                <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#4f46e5" />
-                  <stop offset="100%" stopColor="#7c3aed" />
-                </linearGradient>
-              </defs>
-              <text
-                x={rootX + NODE_W / 2}
-                y={rootY + NODE_H / 2}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="white"
-                fontSize={11}
-                fontWeight="bold"
-                fontFamily="Inter, sans-serif"
-              >
-                {docTitle.length > 22 ? docTitle.slice(0, 20) + '…' : docTitle}
-              </text>
-            </g>
-
-            {/* ── PARENT SECTION NODES ── */}
-            {layouts.map(({ parentY, children, pi }) => {
-              const parent = parents[pi]
-              const isActive = pi === currentParentIdx
-              const isExp = expanded[pi]
-              const hasChildren = children.length > 0
-
-              return (
-                <g key={`parent-${pi}`}>
-                  {/* Parent node rect */}
-                  <rect
-                    x={parentX} y={parentY}
-                    width={NODE_W} height={NODE_H}
-                    rx={10} ry={10}
-                    fill={isActive ? '#1e1b4b' : '#1e293b'}
-                    stroke={isActive ? '#6366f1' : '#475569'}
-                    strokeWidth={isActive ? 2 : 1}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => { onClose(); onJump(pi, 0) }}
-                  />
-                  {/* Parent label */}
-                  <text
-                    x={parentX + 10}
-                    y={parentY + NODE_H / 2}
-                    dominantBaseline="middle"
-                    fill={isActive ? '#a5b4fc' : '#cbd5e1'}
-                    fontSize={10.5}
-                    fontWeight={isActive ? 'bold' : '500'}
-                    fontFamily="Inter, sans-serif"
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
-                    onClick={() => { onClose(); onJump(pi, 0) }}
-                  >
-                    {parent.title.length > 20 ? parent.title.slice(0, 18) + '…' : parent.title}
-                  </text>
-
-                  {/* Expand/Collapse button (like NotebookLM › / ‹) */}
-                  {hasChildren && (
-                    <g
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setExpanded(prev => ({ ...prev, [pi]: !prev[pi] }))}
-                    >
-                      <circle
-                        cx={parentX + NODE_W + 18}
-                        cy={parentY + NODE_H / 2}
-                        r={10}
-                        fill="#1e293b"
-                        stroke={isExp ? '#6366f1' : '#475569'}
-                        strokeWidth={1.5}
-                      />
-                      <text
-                        x={parentX + NODE_W + 18}
-                        y={parentY + NODE_H / 2}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fill={isExp ? '#818cf8' : '#94a3b8'}
-                        fontSize={12}
-                        fontFamily="monospace"
-                        fontWeight="bold"
-                      >
-                        {isExp ? '‹' : '›'}
-                      </text>
-                    </g>
-                  )}
-
-                  {/* ── CHILD SUB-TOPIC NODES ── */}
-                  {isExp && children.map(({ x, y, title, ci }) => (
-                    <g key={`child-${pi}-${ci}`}>
-                      <rect
-                        x={x} y={y}
-                        width={CHILD_W} height={CHILD_H}
-                        rx={8} ry={8}
-                        fill="#0d2a1e"
-                        stroke="#10b981"
-                        strokeWidth={1}
-                        opacity={0.85}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => { onClose(); onJump(pi, ci) }}
-                        onMouseEnter={(e) => {
-                          const rect = e.target.closest('svg').getBoundingClientRect()
-                          setTooltip({ text: title, svgX: x, svgY: y - 14 })
-                        }}
-                        onMouseLeave={() => setTooltip(null)}
-                      />
-                      {/* Dot */}
-                      <circle cx={x + 10} cy={y + CHILD_H / 2} r={3} fill="#34d399" />
-                      {/* Child label */}
-                      <text
-                        x={x + 20}
-                        y={y + CHILD_H / 2}
-                        dominantBaseline="middle"
-                        fill="#6ee7b7"
-                        fontSize={10}
-                        fontFamily="Inter, sans-serif"
-                        fontWeight="500"
-                        style={{ cursor: 'pointer', userSelect: 'none' }}
-                        onClick={() => { onClose(); onJump(pi, ci) }}
-                      >
-                        {title}
-                      </text>
-                    </g>
-                  ))}
-                </g>
-              )
-            })}
-
-            {/* Tooltip overlay */}
-            {tooltip && (
-              <g>
-                <rect
-                  x={tooltip.svgX} y={tooltip.svgY - 16}
-                  width={Math.min(tooltip.text.length * 6.5 + 16, 280)} height={22}
-                  rx={6} fill="#1e293b" stroke="#475569" strokeWidth={1}
-                />
-                <text
-                  x={tooltip.svgX + 8} y={tooltip.svgY - 5}
-                  fill="#f1f5f9" fontSize={10} fontFamily="Inter, sans-serif"
-                >{tooltip.text}</text>
-              </g>
-            )}
-          </svg>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-
-
 export default function LearnSessionPage() {
   const { documentId } = useParams()
   const navigate = useNavigate()
@@ -377,7 +83,19 @@ export default function LearnSessionPage() {
   const [currentParentIdx, setCurrentParentIdx] = useState(0)
   const [currentChildIdx, setCurrentChildIdx] = useState(0)
   const [expandedParents, setExpandedParents] = useState({})
+  const [expandedChapters, setExpandedChapters] = useState({})
   const [view, setView] = useState('reading')
+
+  useEffect(() => {
+    if (structure?.parents) {
+      const initialExpanded = {}
+      structure.parents.forEach((parent) => {
+        const chapNum = extractChapterNumber(parent.title)
+        initialExpanded[chapNum] = true
+      })
+      setExpandedChapters(initialExpanded)
+    }
+  }, [structure])
   const [questionLoading, setQuestionLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(null)
@@ -441,16 +159,16 @@ export default function LearnSessionPage() {
   const progressPct = totalChildren > 0 ? Math.round((passedChildren / totalChildren) * 100) : 0
 
   const isChildUnlocked = (pi, ci) => {
-    if (pi === 0 && ci === 0) return true
-    if (ci > 0) return childScores[structure.parents[pi].children[ci - 1]?.id]?.is_passed ?? false
-    if (pi > 0) return structure.parents[pi - 1]?.children?.every(c => childScores[c.id]?.is_passed) ?? false
-    return false
+    if (pi === 0) return true
+    const prevParent = structure?.parents?.[pi - 1]
+    return prevParent?.progress?.is_completed || false
   }
 
   const loadQuestion = async (chunkId) => {
     setQuestionLoading(true); setSelectedOption(null); setResult(null)
     try {
-      const res = await apiClient.get(`/learning/session/child/${chunkId}/question`)
+      // Question generation is agent-driven (LLM) — needs more than the 15s global default.
+      const res = await apiClient.get(`/learning/session/child/${chunkId}/question`, { timeout: 60000 })
       setCurrentQuestion(res.data)
       setChildScores(prev => ({ ...prev, [chunkId]: { score: res.data.knowledge_score, attempt_count: res.data.attempt_count, is_passed: res.data.is_passed } }))
       setView('question'); startTimer()
@@ -468,9 +186,33 @@ export default function LearnSessionPage() {
         selected_option: selectedOption,
         time_spent_seconds: timeSpent
       }
-      const res = await apiClient.post(`/learning/session/child/${currentChild.id}/answer`, payload)
+      // Adaptive evaluation runs the full agent pipeline (LLM diagnosis + progress sync),
+      // which can exceed the 15s global axios default — a shorter timeout makes the browser
+      // abort the request (pending → canceled) even though the backend is still working.
+      const res = await apiClient.post(`/learning/session/child/${currentChild.id}/answer`, payload, { timeout: 90000 })
       setResult(res.data)
-      setChildScores(prev => ({ ...prev, [currentChild.id]: { score: res.data.knowledge_score, attempt_count: (prev[currentChild.id]?.attempt_count ?? 0) + 1, is_passed: res.data.child_passed } }))
+      if (res.data.child_passed && currentParent) {
+        setChildScores(prev => {
+          const updated = { ...prev }
+          currentParent.children.forEach(c => {
+            updated[c.id] = {
+              score: 100,
+              attempt_count: (prev[c.id]?.attempt_count ?? 0) + (c.id === currentChild.id ? 1 : 0),
+              is_passed: true
+            }
+          })
+          return updated
+        })
+      } else {
+        setChildScores(prev => ({
+          ...prev,
+          [currentChild.id]: {
+            score: res.data.knowledge_score,
+            attempt_count: (prev[currentChild.id]?.attempt_count ?? 0) + 1,
+            is_passed: res.data.child_passed
+          }
+        }))
+      }
       setView('result')
     } catch { toast.error('Failed to submit answer') }
     finally { setSubmitting(false) }
@@ -495,7 +237,7 @@ export default function LearnSessionPage() {
   const handleAskQuestion = async () => {
     if (!qaQuestion.trim()) return
     const q = qaQuestion.trim(); setQaQuestion(''); setQaLoading(true); setQaHistory(prev => [...prev, { role: 'user', text: q }])
-    try { const res = await apiClient.post('/learning/session/qa', { document_id: parseInt(documentId), question: q }); setQaHistory(prev => [...prev, { role: 'ai', text: res.data.answer }]) }
+    try { const res = await apiClient.post('/learning/session/qa', { document_id: parseInt(documentId), question: q }, { timeout: 60000 }); setQaHistory(prev => [...prev, { role: 'ai', text: res.data.answer }]) }
     catch { setQaHistory(prev => [...prev, { role: 'ai', text: 'Failed to get answer.' }]) }
     finally { setQaLoading(false) }
   }
@@ -509,7 +251,7 @@ export default function LearnSessionPage() {
         <h2 className="text-xl font-bold text-white mb-2">Needs Re-processing</h2>
         <p className="text-slate-400 text-sm"><span className="text-white font-medium">{docTitle}</span> was uploaded before the new learning system.</p>
       </div>
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white px-4 py-2 rounded-xl border border-slate-700 bg-[#161C2C] transition-all">
+      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white px-4 py-2 rounded-xl border border-slate-700 bg-[#161C2C] transition-[color,background-color,border-color,box-shadow,transform,opacity]">
         <ChevronLeft className="h-4 w-4" /> Go Back
       </button>
     </div>
@@ -517,7 +259,7 @@ export default function LearnSessionPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
+      <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
       <p className="text-sm text-slate-400 font-medium">Preparing your adaptive learning workspace...</p>
     </div>
   )
@@ -526,12 +268,12 @@ export default function LearnSessionPage() {
     const avgScore = Object.values(childScores).length > 0 ? Math.round(Object.values(childScores).reduce((a, b) => a + b.score, 0) / Object.values(childScores).length) : 0
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center max-w-lg mx-auto">
-        <div className="h-24 w-24 rounded-3xl bg-indigo-500/10 border-2 border-indigo-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/10">
-          <Trophy className="h-12 w-12 text-indigo-400" />
+        <div className="h-24 w-24 rounded-3xl bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/10">
+          <Trophy className="h-12 w-12 text-emerald-400" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Document Mastery Complete!</h1>
-          <p className="text-xs text-slate-400">You've mastered all sections of <span className="text-indigo-300 font-semibold">{docCode}</span></p>
+          <p className="text-xs text-slate-400">You've mastered all sections of <span className="text-emerald-300 font-semibold">{docCode}</span></p>
         </div>
         <div className="grid grid-cols-3 gap-3 w-full">
           {[
@@ -546,8 +288,8 @@ export default function LearnSessionPage() {
           ))}
         </div>
         <div className="flex gap-3 flex-wrap justify-center pt-2">
-          <button onClick={() => navigate(-1)} className="text-xs text-slate-300 hover:text-white px-4 py-2.5 rounded-xl border border-slate-700 bg-[#161C2C] transition-all">Back</button>
-          <button onClick={() => navigate('/trainee/assessments')} className="text-xs text-white bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 rounded-xl transition-all shadow-md">Take Qualification Exam</button>
+          <button onClick={() => navigate(-1)} className="text-xs text-slate-300 hover:text-white px-4 py-2.5 rounded-xl border border-slate-700 bg-[#161C2C] transition-[color,background-color,border-color,box-shadow,transform,opacity]">Back</button>
+          <button onClick={() => navigate('/trainee/assessments')} className="text-xs text-white bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-md">Take Qualification Exam</button>
         </div>
       </div>
     )
@@ -563,7 +305,7 @@ export default function LearnSessionPage() {
           </button>
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
                 {docCode}
               </span>
               <span className="text-xs font-bold text-white truncate">{docTitle}</span>
@@ -590,20 +332,20 @@ export default function LearnSessionPage() {
                 setMindMapLoading(false)
               }
             }}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl bg-[#0F1420] text-slate-300 border border-slate-700 hover:border-slate-600 hover:text-white transition-all shadow-xs"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl bg-[#0F1420] text-slate-300 border border-slate-700 hover:border-slate-600 hover:text-white transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-xs"
           >
-            <Map className="h-3.5 w-3.5 text-indigo-400" /> Mind Map
+            <Map className="h-3.5 w-3.5 text-emerald-400" /> Mind Map
           </button>
 
           <button
             onClick={() => setQaOpen(o => !o)}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl transition-all border ${
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] border ${
               qaOpen
-                ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
                 : 'bg-[#0F1420] text-slate-300 border-slate-700 hover:border-slate-600 hover:text-white'
             }`}
           >
-            <MessageSquare className="h-3.5 w-3.5 text-indigo-400" /> Ask AI
+            <MessageSquare className="h-3.5 w-3.5 text-emerald-400" /> Ask AI
           </button>
         </div>
       </div>
@@ -615,85 +357,130 @@ export default function LearnSessionPage() {
           <div className="border-b border-slate-800 pb-3">
             <div className="flex items-center justify-between text-xs font-semibold text-white mb-2">
               <span>Curriculum Progress</span>
-              <span className="font-mono text-indigo-400">{progressPct}%</span>
+              <span className="font-mono text-emerald-400">{progressPct}%</span>
             </div>
             <KnowledgeBar score={progressPct} />
             <p className="text-[10px] text-slate-400 mt-1">{passedChildren} of {totalChildren} sub-topics completed</p>
           </div>
 
           <div className="space-y-1">
-            {structure?.parents?.map((parent, pi) => {
-              const isExpanded = expandedParents[pi]
-              const parentPassed = parent.children.every(c => childScores[c.id]?.is_passed)
-              const parentInProgress = parent.children.some(c => (childScores[c.id]?.attempt_count ?? 0) > 0)
-              const isCurrentParent = pi === currentParentIdx
+            {(() => {
+              const chapters = []
+              if (structure?.parents) {
+                const chapMap = {}
+                structure.parents.forEach((parent, pi) => {
+                  const chapNum = extractChapterNumber(parent.title)
+                  if (!chapMap[chapNum]) {
+                    chapMap[chapNum] = {
+                      number: chapNum,
+                      title: '',
+                      parents: [],
+                    }
+                    chapters.push(chapMap[chapNum])
+                  }
+                  chapMap[chapNum].parents.push({ ...parent, flatParentIdx: pi })
+                })
 
-              return (
-                <div key={parent.id} className="rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => setExpandedParents(prev => ({ ...prev, [pi]: !prev[pi] }))}
-                    className={`w-full text-left p-2.5 text-xs transition-all flex items-center gap-2 rounded-xl ${
-                      isCurrentParent ? 'bg-indigo-600/10 border border-indigo-500/30 text-white font-bold' : 'hover:bg-slate-800/60 text-slate-300'
-                    }`}
-                  >
-                    {parentPassed ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                      : parentInProgress ? <div className="h-3.5 w-3.5 rounded-full border-2 border-amber-400 shrink-0" />
-                      : <div className="h-3.5 w-3.5 rounded-full border border-slate-700 shrink-0" />}
-                    <span className="flex-1 truncate">{pi + 1}. {parent.title}</span>
-                    {isExpanded ? <ChevronUp className="h-3 w-3 text-slate-400 shrink-0" /> : <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />}
-                  </button>
+                chapters.forEach(ch => {
+                  if (ch.number === '0') {
+                    ch.title = ch.parents[0]?.title || 'Preface'
+                  } else {
+                    const firstTitle = ch.parents[0]?.title || ''
+                    const topic = firstTitle.replace(/^\d+\.\d+\s*/, '').trim()
+                    const firstWord = topic.split(' ')[0]
+                    ch.title = `${ch.number}. ${firstWord ? firstWord.charAt(0).toUpperCase() + firstWord.slice(1) : 'Chapter ' + ch.number}`
+                  }
+                })
+              }
 
-                  {isExpanded && (
-                    <div className="ml-3 my-1 space-y-1 border-l border-slate-800 pl-2">
-                      {parent.children.map((child, ci) => {
-                        const score = childScores[child.id]
-                        const isPassed = score?.is_passed ?? false
-                        const inProgress = !isPassed && (score?.attempt_count ?? 0) > 0
-                        const isLocked = !isChildUnlocked(pi, ci)
-                        const isCurrent = pi === currentParentIdx && ci === currentChildIdx
-                        
-                        // Extract clean display title for child node
-                        const cleanText = child.content.strip ? child.content.strip() : child.content
-                        const childTitle = cleanText.split('\n')[0].replace(/[*#`{}]/g, '').trim()
+              return chapters.map((ch) => {
+                const isChapExpanded = expandedChapters[ch.number] ?? true
+                return (
+                  <div key={ch.number} className="space-y-1">
+                    <button
+                      onClick={() => setExpandedChapters(prev => ({ ...prev, [ch.number]: !prev[ch.number] }))}
+                      className="w-full text-left font-bold text-[10px] text-emerald-300 px-2 py-1.5 uppercase tracking-wider flex items-center gap-1.5 hover:bg-slate-800/30 rounded-lg mt-2.5 transition-colors"
+                    >
+                      {isChapExpanded ? <ChevronDown className="h-3 w-3 shrink-0 text-emerald-400" /> : <ChevronRight className="h-3 w-3 shrink-0 text-emerald-500" />}
+                      <span className="flex-1 truncate">{ch.title}</span>
+                    </button>
 
-                        return (
+                    {isChapExpanded && ch.parents.map((parent) => {
+                      const pi = parent.flatParentIdx
+                      const isExpanded = expandedParents[pi]
+                      const parentPassed = parent.children.every(c => childScores[c.id]?.is_passed)
+                      const parentInProgress = parent.children.some(c => (childScores[c.id]?.attempt_count ?? 0) > 0)
+                      const isCurrentParent = pi === currentParentIdx
+
+                      return (
+                        <div key={parent.id} className="rounded-xl overflow-hidden ml-2">
                           <button
-                            key={child.id}
-                            onClick={() => jumpToChild(pi, ci)}
-                            disabled={isLocked}
-                            className={`w-full text-left px-2.5 py-2 rounded-lg text-[11px] flex items-center gap-2 transition-all ${
-                              isCurrent
-                                ? 'bg-indigo-600 text-white font-semibold shadow-sm'
-                                : isPassed ? 'text-emerald-400 hover:bg-emerald-500/10'
-                                : inProgress ? 'text-amber-300 hover:bg-amber-500/10'
-                                : isLocked ? 'text-slate-600 cursor-not-allowed'
-                                : 'text-slate-400 hover:bg-slate-800/40 hover:text-white'
+                            onClick={() => setExpandedParents(prev => ({ ...prev, [pi]: !prev[pi] }))}
+                            className={`w-full text-left p-2.5 text-xs transition-[color,background-color,border-color,box-shadow,transform,opacity] flex items-center gap-2 rounded-xl ${
+                              isCurrentParent ? 'bg-emerald-600/10 border border-emerald-500/30 text-white font-bold' : 'hover:bg-slate-800/60 text-slate-300'
                             }`}
                           >
-                            {isLocked ? <Lock className="h-3 w-3 shrink-0 text-slate-600" />
-                              : isPassed ? <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-400" />
-                              : inProgress ? <div className="h-2.5 w-2.5 rounded-full border border-amber-400 shrink-0" />
-                              : <div className="h-2.5 w-2.5 rounded-full border border-slate-700 shrink-0" />}
-                            <span className="truncate flex-1">{childTitle || `Sub-topic ${ci + 1}`}</span>
-                            {score?.score > 0 && <span className="font-mono text-[10px] opacity-80">{Math.round(score.score)}%</span>}
+                            {parentPassed ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                              : parentInProgress ? <div className="h-3.5 w-3.5 rounded-full border-2 border-amber-400 shrink-0" />
+                              : <div className="h-3.5 w-3.5 rounded-full border border-slate-700 shrink-0" />}
+                            <span className="flex-1 truncate">{parent.title}</span>
+                            {isExpanded ? <ChevronUp className="h-3 w-3 text-slate-400 shrink-0" /> : <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />}
                           </button>
-                        )
-                      })}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
+
+                          {isExpanded && (
+                            <div className="ml-3 my-1 space-y-1 border-l border-slate-800/80 pl-2">
+                              {parent.children.map((child, ci) => {
+                                const score = childScores[child.id]
+                                const isPassed = score?.is_passed ?? false
+                                const inProgress = !isPassed && (score?.attempt_count ?? 0) > 0
+                                const isLocked = !isChildUnlocked(pi, ci)
+                                const isCurrent = pi === currentParentIdx && ci === currentChildIdx
+                                
+                                // Clean the child title to remove prepended preceding section context
+                                const childTitle = getChildTitle(child.content, `Sub-topic ${ci + 1}`)
+
+                                return (
+                                  <button
+                                    key={child.id}
+                                    onClick={() => jumpToChild(pi, ci)}
+                                    disabled={isLocked}
+                                    className={`w-full text-left px-2.5 py-2 rounded-lg text-[11px] flex items-center gap-2 transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
+                                      isCurrent
+                                        ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                                        : isPassed ? 'text-emerald-400 hover:bg-emerald-500/10'
+                                        : inProgress ? 'text-amber-300 hover:bg-amber-500/10'
+                                        : isLocked ? 'text-slate-600 cursor-not-allowed'
+                                        : 'text-slate-400 hover:bg-slate-800/40 hover:text-white'
+                                    }`}
+                                  >
+                                    {isLocked ? <Lock className="h-3 w-3 shrink-0 text-slate-600" />
+                                      : isPassed ? <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-400" />
+                                      : inProgress ? <div className="h-2.5 w-2.5 rounded-full border border-amber-400 shrink-0" />
+                                      : <div className="h-2.5 w-2.5 rounded-full border border-slate-700 shrink-0" />}
+                                    <span className="truncate flex-1">{childTitle}</span>
+                                    {score?.score > 0 && <span className="font-mono text-[10px] opacity-80">{Math.round(score.score)}%</span>}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })
+            })()}
           </div>
         </div>
 
         {/* Center Main Column: Reading Material & Evaluation Workspace (Adaptive 6 to 9 cols) */}
-        <div className={`space-y-4 transition-all duration-300 ${qaOpen ? 'lg:col-span-6' : 'lg:col-span-9'}`}>
+        <div className={`space-y-4 transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-300 ${qaOpen ? 'lg:col-span-6' : 'lg:col-span-9'}`}>
           {view === 'reading' && currentChild && (
             <div className="rounded-3xl border border-slate-800 bg-[#161C2C] p-6 shadow-md space-y-5">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                     <BookOpen className="h-4 w-4" />
                   </div>
                   <div>
@@ -717,35 +504,66 @@ export default function LearnSessionPage() {
               </div>
 
               {/* Sub-topic Main Content */}
-              <div className="text-xs text-slate-200 leading-relaxed font-sans prose prose-invert prose-xs max-w-none prose-headings:font-bold prose-headings:text-white prose-h3:text-sm prose-p:my-2.5 prose-ul:my-2 prose-ul:pl-4 prose-code:text-indigo-300 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[#0F1420] prose-pre:border prose-pre:border-slate-800 prose-pre:p-4 prose-pre:rounded-2xl">
+              <div className="text-xs text-slate-200 leading-relaxed font-sans prose prose-invert prose-xs max-w-none prose-headings:font-bold prose-headings:text-white prose-h3:text-sm prose-p:my-2.5 prose-ul:my-2 prose-ul:pl-4 prose-code:text-emerald-300 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[#0F1420] prose-pre:border prose-pre:border-slate-800 prose-pre:p-4 prose-pre:rounded-2xl">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                   {normalizeContent(currentChild.content)}
                 </ReactMarkdown>
               </div>
 
-              {/* Key Takeaway Learning Card */}
-              {currentChild.learning_card && (
-                <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-5 space-y-1.5">
-                  <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
-                    <Sparkles className="h-4 w-4" /> Key Learning Takeaway
+              {/* Key Takeaway Learning Card (content excerpt fallback when missing) */}
+              {(() => {
+                const cardText = currentChild.learning_card || (
+                  currentChild.content
+                    ? currentChild.content.replace(/\s+/g, ' ').trim().slice(0, 220)
+                    : ''
+                )
+                if (!cardText) return null
+                return (
+                  <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 space-y-1.5">
+                    <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider">
+                      <Sparkles className="h-4 w-4" /> Key Learning Takeaway
+                    </div>
+                    <div className="text-xs text-emerald-200 leading-relaxed font-medium">
+                      {currentChild.learning_card
+                        ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{cardText}</ReactMarkdown>
+                        : <p className="text-emerald-200/90">{cardText}…</p>}
+                    </div>
                   </div>
-                  <div className="text-xs text-indigo-200 leading-relaxed font-medium">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentChild.learning_card}</ReactMarkdown>
-                  </div>
-                </div>
-              )}
+                )
+              })()}
 
-              {/* Bottom Test Button */}
+              {/* Bottom Navigation / Test Button */}
               <div className="pt-4 border-t border-slate-800 flex justify-end">
-                <button
-                  onClick={() => loadQuestion(currentChild.id)}
-                  disabled={questionLoading}
-                  className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50"
-                >
-                  {questionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
-                  <span>Test Knowledge on this Sub-topic</span>
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+                {currentChildIdx < (currentParent?.children?.length - 1) ? (
+                  <button
+                    onClick={async () => {
+                      // Save progress before moving to next page
+                      try {
+                        await apiClient.post(`/learning/session/chunk/${currentChild.id}/understood`, {
+                          completed_chunk_ids: [currentChild.id]
+                        })
+                      } catch (err) {
+                        console.error('Failed to save progress:', err)
+                      }
+                      // Move sequentially to the next child in this section
+                      setCurrentChildIdx(ci => ci + 1)
+                    }}
+                    className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-2 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-lg shadow-indigo-600/20"
+                  >
+                    <span>Next Sub-topic</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => loadQuestion(currentChild.id)}
+                    disabled={questionLoading}
+                    className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-2 transition-[color,background-color,border-color,box-shadow,transform,opacity] shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                  >
+                    {questionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
+                    <span>Take Section Quiz</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -755,7 +573,7 @@ export default function LearnSessionPage() {
             <div className="rounded-3xl border border-slate-800 bg-[#161C2C] p-6 shadow-md space-y-5">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                     <Brain className="h-4 w-4" />
                   </div>
                   <h3 className="text-base font-bold text-white">Diagnostic Evaluation</h3>
@@ -776,14 +594,14 @@ export default function LearnSessionPage() {
                     <button
                       key={key}
                       onClick={() => setSelectedOption(key)}
-                      className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-xs text-left transition-all ${
+                      className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-xs text-left transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
                         isSelected
-                          ? 'border-indigo-500/50 bg-indigo-500/10 text-white font-semibold shadow-xs'
+                          ? 'border-emerald-500/50 bg-emerald-500/10 text-white font-semibold shadow-xs'
                           : 'border-slate-800 bg-[#0F1420] text-slate-300 hover:border-slate-700 hover:bg-slate-800/40'
                       }`}
                     >
                       <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                        isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'
+                        isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
                       }`}>
                         {key}
                       </span>
@@ -797,7 +615,7 @@ export default function LearnSessionPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={!selectedOption || submitting}
-                  className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
+                  className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50"
                 >
                   {submitting ? 'Evaluating Answer...' : 'Submit Diagnostic Answer'}
                 </button>
@@ -815,18 +633,51 @@ export default function LearnSessionPage() {
                 <div>
                   <h4 className="text-xs font-bold">{result.is_correct ? 'Correct Evaluation!' : 'Needs Review'}</h4>
                   {result.explanation && <p className="text-xs mt-1 leading-relaxed text-slate-300">{result.explanation}</p>}
+                  {result.diagnosis && (
+                    <p className="text-[11px] mt-1.5 font-semibold text-rose-200/90">
+                      Diagnosis: {result.diagnosis}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end gap-3">
+              {!result.is_correct && result.re_explanation && (
+                <div className="rounded-2xl border border-sky-500/20 bg-sky-500/10 p-4">
+                  <div className="flex items-center gap-2 text-sky-300 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <BookOpen className="h-3.5 w-3.5" /> Re-explanation — what you missed
+                  </div>
+                  <p className="text-xs text-sky-100/90 leading-relaxed">{result.re_explanation}</p>
+                </div>
+              )}
+
+              {currentChild?.learning_card && (
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 space-y-1.5">
+                  <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="h-4 w-4" /> Key Learning Takeaway
+                  </div>
+                  <div className="text-xs text-emerald-200 leading-relaxed font-medium">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentChild.learning_card}</ReactMarkdown>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-2 flex flex-wrap justify-end gap-3">
                 {result.child_passed ? (
-                  <button onClick={goToNextChild} className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5">
+                  <button onClick={goToNextChild} className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5">
                     Continue to Next Sub-topic <ChevronRight className="h-4 w-4" />
                   </button>
                 ) : (
-                  <button onClick={() => setView('reading')} className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">
-                    Re-read Section Material
-                  </button>
+                  <>
+                    <button
+                      onClick={() => loadQuestion(currentChild.id)}
+                      className="px-5 py-2.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5"
+                    >
+                      <Brain className="h-3.5 w-3.5" /> Try Another Question
+                    </button>
+                    <button onClick={() => setView('reading')} className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">
+                      Re-read Section Material
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -838,7 +689,7 @@ export default function LearnSessionPage() {
           <div className="lg:col-span-3 rounded-2xl border border-slate-800 bg-[#161C2C] shadow-md flex flex-col h-[calc(100vh-6rem)] sticky top-4 overflow-hidden">
             <div className="p-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0F1420]">
               <div className="flex items-center gap-2 text-xs font-bold text-white">
-                <Sparkles className="h-4 w-4 text-indigo-400" />
+                <Sparkles className="h-4 w-4 text-emerald-400" />
                 <span>AI Document Assistant</span>
               </div>
               <button onClick={() => setQaOpen(false)} className="text-slate-400 hover:text-white p-1 rounded-lg">
@@ -850,7 +701,7 @@ export default function LearnSessionPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {qaHistory.length === 0 ? (
                 <div className="text-center py-12 text-slate-500 space-y-2">
-                  <MessageSquare className="h-8 w-8 mx-auto text-indigo-400 stroke-[1.5]" />
+                  <MessageSquare className="h-8 w-8 mx-auto text-emerald-400 stroke-[1.5]" />
                   <p className="text-xs font-semibold text-slate-300">Ask about this SOP</p>
                   <p className="text-[11px] text-slate-400">Get grounded answers from this document.</p>
                 </div>
@@ -859,7 +710,7 @@ export default function LearnSessionPage() {
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[90%] rounded-2xl p-3 text-xs leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-indigo-600 text-white rounded-tr-xs font-medium'
+                        ? 'bg-emerald-600 text-white rounded-tr-xs font-medium'
                         : 'bg-[#0F1420] border border-slate-800 text-slate-200 rounded-tl-xs prose prose-invert prose-xs'
                     }`}>
                       {msg.role === 'user' ? msg.text : <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>}
@@ -869,7 +720,7 @@ export default function LearnSessionPage() {
               )}
               {qaLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-[#0F1420] border border-slate-800 rounded-2xl px-3 py-2 text-indigo-400 text-xs flex items-center gap-2">
+                  <div className="bg-[#0F1420] border border-slate-800 rounded-2xl px-3 py-2 text-emerald-400 text-xs flex items-center gap-2">
                     <Loader2 className="h-3.5 w-3.5 animate-spin" /> Synthesizing answer...
                   </div>
                 </div>
@@ -884,12 +735,12 @@ export default function LearnSessionPage() {
                   onChange={e => setQaQuestion(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleAskQuestion()}
                   placeholder="Ask about this document..."
-                  className="flex-1 rounded-xl border border-slate-800 bg-[#161C2C] px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500/50"
+                  className="flex-1 rounded-xl border border-slate-800 bg-[#161C2C] px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-emerald-500/50"
                 />
                 <button
                   onClick={handleAskQuestion}
                   disabled={qaLoading || !qaQuestion.trim()}
-                  className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all disabled:opacity-50"
+                  className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-[color,background-color,border-color,box-shadow,transform,opacity] disabled:opacity-50"
                 >
                   <Send className="h-3.5 w-3.5" />
                 </button>
@@ -901,14 +752,24 @@ export default function LearnSessionPage() {
 
       {/* Interactive SVG Mind Map — NotebookLM Style */}
       <MindMapModal
-        open={mindMapOpen}
+        open={mindMapOpen && !mindMapLoading}
         onClose={() => setMindMapOpen(false)}
         docCode={docCode}
         docTitle={docTitle}
-        parents={structure?.parents ?? []}
+        nodes={mindMapData?.nodes ?? []}
         currentParentIdx={currentParentIdx}
         onJump={jumpToChild}
       />
+
+      {/* Loading Modal Overlay */}
+      {mindMapOpen && mindMapLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/90 backdrop-blur-lg">
+          <div className="flex flex-col items-center gap-4 bg-[#0B0F17] border border-slate-800 rounded-3xl p-10 shadow-2xl">
+            <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent animate-spin rounded-full" />
+            <p className="text-sm text-slate-300 font-medium">Building document mind map tree...</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, BellDot, Check, CheckCheck } from 'lucide-react'
+import { Bell, BellDot, CheckCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { post } from '@/api/client'
 import { useAuthStore } from '@/store/authStore'
@@ -41,6 +41,10 @@ export function NotifBell() {
         onClick={() => setOpen(o => !o)}
         className="relative p-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-200 hover:text-white transition-all shadow-xs"
         title="Notifications"
+        aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : 'Notifications'}
+        aria-expanded={open}
+        aria-haspopup='dialog'
+        aria-controls='notifications-panel'
       >
         {unreadCount > 0 ? <BellDot className="h-4 w-4 text-indigo-400" /> : <Bell className="h-4 w-4 text-slate-300" />}
         {unreadCount > 0 && (
@@ -51,7 +55,7 @@ export function NotifBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+        <section id='notifications-panel' role='dialog' aria-label='Notifications' className="absolute right-0 top-full mt-2 w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
             <p className="text-xs font-bold text-white uppercase tracking-wider">Notifications</p>
@@ -71,8 +75,9 @@ export function NotifBell() {
                 No notifications
               </div>
             ) : recentNotifs.map(n => (
-              <div key={n.id}
-                className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-800/40 transition-colors cursor-pointer ${!n.is_read ? 'bg-indigo-500/10' : ''}`}
+              <button key={n.id}
+                type="button"
+                className={`flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-slate-800/40 transition-colors cursor-pointer ${!n.is_read ? 'bg-indigo-500/10' : ''}`}
                 onClick={() => !n.is_read && markOne(n.id)}
               >
                 <div className={`mt-1 h-2 w-2 rounded-full flex-shrink-0 ${!n.is_read ? 'bg-indigo-500' : 'bg-transparent'}`} />
@@ -80,7 +85,7 @@ export function NotifBell() {
                   <p className={`text-xs font-bold truncate ${!n.is_read ? 'text-white' : 'text-slate-400'}`}>{n.title}</p>
                   <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">{n.message}</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -95,7 +100,7 @@ export function NotifBell() {
               </button>
             </div>
           )}
-        </div>
+        </section>
       )}
     </div>
   )

@@ -30,7 +30,7 @@ function Modal({ title, onClose, children }) {
   )
 }
 
-const INPUT_CLS = "w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 placeholder:text-slate-500"
+const INPUT_CLS = "w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-indigo-500/40 placeholder:text-slate-500"
 const LABEL_CLS = "block text-xs text-slate-400 mb-1.5 font-semibold uppercase tracking-wider"
 
 /* ─────────────────────────────────────────────────────────── */
@@ -102,7 +102,7 @@ function DepartmentsTab() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search departments…"
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500" />
         </div>
         <Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" /> Add Department</Button>
       </div>
@@ -478,7 +478,7 @@ export default function MasterDataPage() {
           <button
             key={key}
             onClick={() => setActiveTab(key)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-xl transition-[color,background-color,border-color,box-shadow,transform,opacity] ${
               activeTab === key
                 ? 'text-cyan-400 border-b-2 border-cyan-400 -mb-px'
                 : 'text-slate-400 hover:text-white'
