@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { LogOut, ChevronRight, Menu, X } from 'lucide-react'
 import { NotifBell } from '@/components/shared/NotifBell'
+import { CoinWidget, StreakWidget } from '@/components/shared/RewardWidgets'
 
 const roleTitles = {
   admin: 'Admin Control Center',
@@ -89,6 +90,9 @@ export default function RoleShell({ role = 'admin' }) {
             </div>
 
             <NotifBell />
+            {/* Coins & streaks are learner motivations — staff see report views instead */}
+            {role === 'trainee' && <CoinWidget />}
+            {role === 'trainee' && <StreakWidget />}
             <ThemeToggle />
 
             {/* Mobile Menu Toggle button */}

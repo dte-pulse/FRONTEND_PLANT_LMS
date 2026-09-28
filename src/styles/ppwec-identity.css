@@ -1,0 +1,193 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PPWEC VISUAL IDENTITY (§9/§10) — the "I am inside a PPWEC module" template.
+
+   Premium pharmaceutical look, deliberately distinct from the operational LMS
+   indigo/teal: deep pharmacy-teal + compass-gold, molecular motifs, PRICE
+   value anchors, MD-philosophy leadership callouts. Imported from index.css.
+
+   Dark is the source of truth; a light-mode remap sits at the bottom and
+   keeps every text pair ≥ 4.5:1 (matches the project's theming architecture).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Identity palette */
+  --ppwec-ink: #e6f2ef;            /* primary text on dark            */
+  --ppwec-ink-dim: #9fb8b1;        /* secondary text on dark          */
+  --ppwec-teal: #0f766e;           /* pharma teal — primary accent     */
+  --ppwec-teal-deep: #063c38;      /* deep teal surface               */
+  --ppwec-teal-glow: #14b8a6;      /* bright teal for focus/highlight */
+  --ppwec-gold: #d9a441;           /* compass gold — PRICE / badges    */
+  --ppwec-gold-soft: #f0c987;      /* gold for text on dark           */
+  --ppwec-surface: #0c1f1d;        /* module canvas                   */
+  --ppwec-surface-2: #102925;      /* raised cards                    */
+  --ppwec-line: rgba(20, 184, 166, 0.18);
+  --ppwec-radius: 1.25rem;
+}
+
+/* ── Module shell: the immersive canvas the player renders on ─────────────── */
+.ppwec-scope {
+  position: relative;
+  background:
+    radial-gradient(1100px 500px at 85% -5%, rgba(15, 118, 110, 0.16), transparent 60%),
+    radial-gradient(900px 420px at -10% 30%, rgba(217, 164, 65, 0.07), transparent 55%),
+    var(--ppwec-surface);
+  border-radius: var(--ppwec-radius);
+}
+
+/* Molecular lattice backdrop (pure CSS — §9 imagery without binary assets) */
+.ppwec-scope::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(20, 184, 166, 0.10) 1px, transparent 2px),
+    radial-gradient(circle at 1px 1px, rgba(217, 164, 65, 0.05) 1px, transparent 2px);
+  background-size: 56px 56px, 84px 84px;
+  background-position: 0 0, 28px 28px;
+  border-radius: inherit;
+  opacity: 0.5;
+}
+
+/* ── Section rail: where in the journey (§6 structure) am I ───────────────── */
+.ppwec-section-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ppwec-gold-soft);
+  background: linear-gradient(120deg, rgba(15, 118, 110, 0.35), rgba(217, 164, 65, 0.14));
+  border: 1px solid var(--ppwec-line);
+}
+.ppwec-section-chip::before {
+  content: '⬡'; /* benzene ring glyph — quiet pharma motif */
+  font-size: 11px;
+  color: var(--ppwec-teal-glow);
+}
+
+/* ── PRICE value anchor (§4): tiny gold-compass tag on anchored screens ───── */
+.ppwec-price-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 0.5rem;
+  font-size: 10px;
+  font-weight: 800;
+  color: #241a04;
+  background: linear-gradient(120deg, var(--ppwec-gold), #b57f22);
+  box-shadow: 0 1px 6px rgba(217, 164, 65, 0.25);
+}
+
+/* ── MD philosophy / leadership insight callout (§4) ──────────────────────── */
+.ppwec-md-callout {
+  position: relative;
+  border: 1px solid rgba(217, 164, 65, 0.35);
+  background:
+    linear-gradient(135deg, rgba(217, 164, 65, 0.12), rgba(15, 118, 110, 0.10) 65%),
+    var(--ppwec-surface-2);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem 0.9rem 2.9rem;
+  color: var(--ppwec-ink);
+}
+.ppwec-md-callout::before {
+  content: '❝';
+  position: absolute;
+  left: 1rem;
+  top: 0.7rem;
+  font-size: 1.35rem;
+  color: var(--ppwec-gold-soft);
+}
+.ppwec-md-callout::after {
+  content: 'Leadership insight';
+  position: absolute;
+  right: 0.9rem;
+  top: 0.55rem;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ppwec-ink-dim);
+}
+
+/* ── Pulse Moment / Principle keep their pulse accent inside PPWEC too ────── */
+.ppwec-pulse-moment {
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.22), rgba(20, 184, 166, 0.08));
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  color: var(--ppwec-ink);
+  font-weight: 600;
+}
+
+/* ── Progress rail: journey-flavoured (gold head on teal track) ───────────── */
+.ppwec-progress-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(20, 184, 166, 0.14);
+  overflow: hidden;
+}
+.ppwec-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--ppwec-teal), var(--ppwec-teal-glow) 70%, var(--ppwec-gold));
+  transition: width 0.4s ease;
+}
+
+/* ── Passport: certification-grade frame for module cards ─────────────────── */
+.ppwec-passport-card {
+  border: 1px solid var(--ppwec-line);
+  border-radius: 1rem;
+  background: linear-gradient(160deg, var(--ppwec-surface-2), var(--ppwec-surface));
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.ppwec-passport-card:hover { transform: translateY(-2px); border-color: rgba(20, 184, 166, 0.4); }
+.ppwec-passport-card.is-complete { border-color: rgba(217, 164, 65, 0.45); }
+.ppwec-passport-card.is-complete::after {
+  content: '✓';
+  float: right;
+  color: var(--ppwec-gold-soft);
+  font-weight: 900;
+}
+
+/* ── Assessment ring: gold for pass ───────────────────────────────────────── */
+.ppwec-score-ring { color: var(--ppwec-gold-soft); }
+
+/* ═══ Light-mode remap (html:not(.dark)) — same geometry, daylight lab ═══ */
+html:not(.dark) .ppwec-scope {
+  background:
+    radial-gradient(1100px 500px at 85% -5%, rgba(15, 118, 110, 0.10), transparent 60%),
+    radial-gradient(900px 420px at -10% 30%, rgba(180, 83, 9, 0.05), transparent 55%),
+    #f4faf8;
+}
+html:not(.dark) .ppwec-section-chip {
+  color: #0f5c56;
+  background: linear-gradient(120deg, rgba(15, 118, 110, 0.12), rgba(217, 164, 65, 0.16));
+  border-color: rgba(15, 118, 110, 0.25);
+}
+html:not(.dark) .ppwec-md-callout {
+  color: #134e4a;
+  background: linear-gradient(135deg, rgba(217, 164, 65, 0.14), rgba(15, 118, 110, 0.07)), #fdfaf2;
+  border-color: rgba(180, 83, 9, 0.3);
+}
+html:not(.dark) .ppwec-md-callout::after { color: #92610a; }
+html:not(.dark) .ppwec-pulse-moment {
+  color: #0f5c56;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(20, 184, 166, 0.07));
+}
+html:not(.dark) .ppwec-passport-card {
+  background: linear-gradient(160deg, #ffffff, #f0f7f5);
+}
+html:not(.dark) .ppwec-progress-track { background: rgba(15, 118, 110, 0.14); }
+
+/* Reduced motion: soften transitions */
+@media (prefers-reduced-motion: reduce) {
+  .ppwec-progress-fill { transition: none; }
+  .ppwec-passport-card { transition: none; }
+  .ppwec-passport-card:hover { transform: none; }
+}

@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
               <p className='text-slate-500 text-sm py-4 text-center'>✅ No NQ employees</p>
             ) : (
               nqList.slice(0, 5).map((emp, i) => (
-                <div key={i} className='rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-3'>
+                <div key={i} className='on-tinted-accent rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-3'>
                   <div className='flex items-center justify-between'>
                     <div>
                       <p className='text-sm font-medium text-white'>{emp.full_name}</p>

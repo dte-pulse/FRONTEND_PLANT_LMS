@@ -125,7 +125,7 @@ export default function HodDashboardPage() {
               </div>
             ) : (
               nqList.slice(0, 4).map(item => (
-                <div key={item.user_id} className='rounded-3xl border border-red-500/20 bg-red-500/5 p-4 flex flex-col gap-2'>
+                <div key={item.user_id} className='on-tinted-accent rounded-3xl border border-red-500/20 bg-red-500/5 p-4 flex flex-col gap-2'>
                   <div className='flex items-center justify-between gap-3'>
                     <div>
                       <p className='font-medium text-white text-sm'>{item.full_name} <span className='text-xs text-slate-400'>({item.employee_code})</span></p>

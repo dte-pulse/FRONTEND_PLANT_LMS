@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import RoleShell from '@/layouts/RoleShell'
 import LoginPage from '@/pages/auth/LoginPage'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
@@ -28,6 +28,11 @@ import TraineeAssessmentsPage from '@/pages/trainee/AssessmentsPage'
 import DocViewPage from '@/pages/trainee/DocViewPage'
 import LearnSessionPage from '@/pages/trainee/LearnSessionPage'
 import MindMapPage from '@/pages/trainee/MindMapPage'
+import PpwecPassportPage from '@/pages/trainee/PpwecPassportPage'
+import PpwecModulePage from '@/pages/trainee/PpwecModulePage'
+import PpwecReportPage from '@/pages/admin/PpwecReportPage'
+import PpwecAuthoringPage from '@/pages/admin/PpwecAuthoringPage'
+import LeaderboardPage from '@/pages/shared/LeaderboardPage'
 
 const router = createBrowserRouter([
   { path: '/', element: <LoginPage /> },
@@ -44,6 +49,8 @@ const router = createBrowserRouter([
       { path: 'observability', element: <ObservabilityPage /> },
       { path: 'notifications', element: <NotificationsPage /> },
       { path: 'master-data', element: <MasterDataPage /> },
+      { path: 'ppwec', element: <PpwecReportPage /> },
+      { path: 'ppwec/authoring', element: <PpwecAuthoringPage /> },
     ],
   },
   {
@@ -81,8 +88,18 @@ const router = createBrowserRouter([
       { path: 'document/:documentId', element: <DocViewPage /> },
       { path: 'learn/:documentId', element: <LearnSessionPage /> },
       { path: 'mindmap/:documentId', element: <MindMapPage /> },
+      { path: 'ppwec', element: <PpwecPassportPage /> },
+      { path: 'ppwec/:moduleNumber', element: <PpwecModulePage /> },
     ],
   },
+  {
+    // Rewards page: trainee-only (gamification is a learner motivation surface)
+    path: '/trainee/leaderboard',
+    element: <RoleShell role='trainee' />,
+    children: [{ index: true, element: <LeaderboardPage /> }],
+  },
+  // Unknown / de-scopeed URLs (e.g. /admin/leaderboard) → login or role home
+  { path: '*', element: <Navigate to='/' replace /> },
 ])
 
 export default function AppRoutes() {

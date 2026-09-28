@@ -483,7 +483,7 @@ export default function ReportsPage() {
           {nqList.length === 0 ? (
             <div className="text-center py-12 text-slate-500">No NQ employees detected.</div>
           ) : nqList.map((emp, i) => (
-            <div key={i} className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 flex justify-between items-center">
+            <div key={i} className="on-tinted-accent rounded-2xl border border-red-500/20 bg-red-500/5 p-4 flex justify-between items-center">
               <div>
                 <p className="font-semibold text-white">{emp.full_name}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{emp.employee_code} · {emp.department || '—'}</p>

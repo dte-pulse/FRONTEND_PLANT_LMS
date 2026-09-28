@@ -1,5 +1,6 @@
 import {
   Activity,
+  Award,
   Bell,
   BookOpenText,
   BrainCircuit,
@@ -7,10 +8,12 @@ import {
   Database,
   FileCheck2,
   GraduationCap,
+  PencilRuler,
   LayoutDashboard,
   ShieldCheck,
   Users,
   Route,
+  Trophy,
 } from 'lucide-react'
 
 export const roleNavigation = {
@@ -23,6 +26,8 @@ export const roleNavigation = {
     { to: '/admin/observability', label: 'AI Observability', icon: Activity },
     { to: '/admin/master-data', label: 'Master Data', icon: Database },
     { to: '/admin/notifications', label: 'Alerts', icon: Bell },
+    { to: '/admin/ppwec', label: 'PPWEC', icon: Award },
+    { to: '/admin/ppwec/authoring', label: 'Content Studio', icon: PencilRuler },
   ],
   hod: [
     { to: '/hod', label: 'Department Pulse', icon: LayoutDashboard },
@@ -39,10 +44,12 @@ export const roleNavigation = {
   ],
   trainee: [
     { to: '/trainee', label: 'My Learning', icon: LayoutDashboard },
+    { to: '/trainee/ppwec', label: 'PPWEC Passport', icon: Award },
     { to: '/trainee/paths', label: 'Paths', icon: Route },
     { to: '/trainee/progress', label: 'Progress', icon: ChartColumnBig },
     { to: '/trainee/capability', label: 'Capability', icon: BrainCircuit },
     { to: '/trainee/qa', label: 'AI Q&A', icon: Bell },
     { to: '/trainee/assessments', label: 'Assessments', icon: ShieldCheck },
+    { to: '/trainee/leaderboard', label: 'Leaderboard', icon: Trophy },
   ],
 }
