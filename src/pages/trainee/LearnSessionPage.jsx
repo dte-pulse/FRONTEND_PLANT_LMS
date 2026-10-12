@@ -191,6 +191,10 @@ export default function LearnSessionPage() {
       // abort the request (pending → canceled) even though the backend is still working.
       const res = await apiClient.post(`/learning/session/child/${currentChild.id}/answer`, payload, { timeout: 90000 })
       setResult(res.data)
+      if (res.data.coins_earned > 0) {
+        toast.success(`+${res.data.coins_earned} coins 🪙`)
+        window.dispatchEvent(new Event('coins:refresh')) // refetch header coin widget
+      }
       if (res.data.child_passed && currentParent) {
         setChildScores(prev => {
           const updated = { ...prev }

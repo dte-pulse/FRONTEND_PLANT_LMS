@@ -156,6 +156,10 @@ export default function TraineeAssessmentsPage() {
       const result = (await apiClient.post(`/mcq/document/${activeAssignment.document_id}/effectiveness-exam/submit`, payload)).data
       setScore(Math.round(result.score)); setPassed(result.passed); setFeedback(result.feedback || []); setView('result')
       if (result.passed) toast.success('Congratulations! Qualification exam passed.'); else toast.error('Exam score below passing target (80%).')
+      if (result.coins_earned > 0) {
+        toast.success(`+${result.coins_earned} coins 🪙`)
+        window.dispatchEvent(new Event('coins:refresh')) // refetch header coin widget
+      }
       fetchData()
     } catch (error) { toast.error(error?.response?.data?.detail || 'Failed to submit exam') }
     finally { setSubmitting(false) }

@@ -27,7 +27,8 @@ export const roleNavigation = {
     { to: '/admin/master-data', label: 'Master Data', icon: Database },
     { to: '/admin/notifications', label: 'Alerts', icon: Bell },
     { to: '/admin/ppwec', label: 'PPWEC', icon: Award },
-    { to: '/admin/ppwec/authoring', label: 'Content Studio', icon: PencilRuler },
+    // Content Studio hidden from the navbar only — page/route untouched.
+    // { to: '/admin/ppwec/authoring', label: 'Content Studio', icon: PencilRuler },
   ],
   hod: [
     { to: '/hod', label: 'Department Pulse', icon: LayoutDashboard },
